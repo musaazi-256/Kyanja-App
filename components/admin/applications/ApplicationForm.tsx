@@ -1,7 +1,7 @@
 'use client'
 
 import { useTransition } from 'react'
-import { useForm } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
@@ -12,7 +12,6 @@ import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Separator } from '@/components/ui/separator'
 import { Loader2 } from 'lucide-react'
 import type { ActionResult } from '@/types/app'
 
@@ -31,7 +30,10 @@ export default function ApplicationForm({ action, submitLabel = 'Submit Applicat
   const [pending, startTransition] = useTransition()
 
   const {
-    register, handleSubmit, setValue, formState: { errors },
+    register,
+    handleSubmit,
+    control,
+    formState: { errors },
   } = useForm<ApplicationFormData>({
     resolver: zodResolver(applicationSchema),
     defaultValues: { academic_year: CURRENT_YEAR },
@@ -39,7 +41,9 @@ export default function ApplicationForm({ action, submitLabel = 'Submit Applicat
 
   function onSubmit(data: ApplicationFormData) {
     const fd = new FormData()
-    Object.entries(data).forEach(([k, v]) => { if (v) fd.set(k, String(v)) })
+    Object.entries(data).forEach(([k, v]) => {
+      if (v !== undefined && v !== null && v !== '') fd.set(k, String(v))
+    })
 
     startTransition(async () => {
       const result = await action(fd)
@@ -55,6 +59,7 @@ export default function ApplicationForm({ action, submitLabel = 'Submit Applicat
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+
       {/* Student Info */}
       <Card>
         <CardHeader><CardTitle className="text-base">Student Information</CardTitle></CardHeader>
@@ -74,42 +79,69 @@ export default function ApplicationForm({ action, submitLabel = 'Submit Applicat
             <Input id="date_of_birth" type="date" {...register('date_of_birth')} />
             {errors.date_of_birth && <p className="text-xs text-red-500">{errors.date_of_birth.message}</p>}
           </div>
+
+          {/* Gender — Controller ensures proper registration and error clearing */}
           <div className="space-y-2">
             <Label>Gender</Label>
-            <Select onValueChange={(v) => setValue('gender', v as 'male' | 'female' | 'other')}>
-              <SelectTrigger><SelectValue placeholder="Select gender" /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="male">Male</SelectItem>
-                <SelectItem value="female">Female</SelectItem>
-                <SelectItem value="other">Other</SelectItem>
-              </SelectContent>
-            </Select>
+            <Controller
+              name="gender"
+              control={control}
+              render={({ field }) => (
+                <Select onValueChange={field.onChange} value={field.value ?? ''}>
+                  <SelectTrigger><SelectValue placeholder="Select gender" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="male">Male</SelectItem>
+                    <SelectItem value="female">Female</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+              )}
+            />
           </div>
+
           <div className="space-y-2">
             <Label htmlFor="nationality">Nationality</Label>
             <Input id="nationality" {...register('nationality')} placeholder="e.g. Ugandan" />
           </div>
+
+          {/* Applying for class — required, Controller for proper tracking */}
           <div className="space-y-2">
             <Label>Applying for Class *</Label>
-            <Select onValueChange={(v) => setValue('applying_for_class', v)}>
-              <SelectTrigger><SelectValue placeholder="Select class" /></SelectTrigger>
-              <SelectContent>
-                {AVAILABLE_CLASSES.map((c) => (
-                  <SelectItem key={c} value={c}>{c}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Controller
+              name="applying_for_class"
+              control={control}
+              render={({ field }) => (
+                <Select onValueChange={field.onChange} value={field.value ?? ''}>
+                  <SelectTrigger><SelectValue placeholder="Select class" /></SelectTrigger>
+                  <SelectContent>
+                    {AVAILABLE_CLASSES.map((c) => (
+                      <SelectItem key={c} value={c}>{c}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
             {errors.applying_for_class && <p className="text-xs text-red-500">{errors.applying_for_class.message}</p>}
           </div>
+
+          {/* Academic year */}
           <div className="space-y-2">
             <Label>Academic Year *</Label>
-            <Select defaultValue={CURRENT_YEAR} onValueChange={(v) => setValue('academic_year', v)}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent>
-                {YEARS.map((y) => <SelectItem key={y} value={y}>{y}</SelectItem>)}
-              </SelectContent>
-            </Select>
+            <Controller
+              name="academic_year"
+              control={control}
+              render={({ field }) => (
+                <Select onValueChange={field.onChange} value={field.value ?? CURRENT_YEAR}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {YEARS.map((y) => <SelectItem key={y} value={y}>{y}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              )}
+            />
+            {errors.academic_year && <p className="text-xs text-red-500">{errors.academic_year.message}</p>}
           </div>
+
           <div className="space-y-2">
             <Label htmlFor="previous_school">Previous School</Label>
             <Input id="previous_school" {...register('previous_school')} />
@@ -126,16 +158,27 @@ export default function ApplicationForm({ action, submitLabel = 'Submit Applicat
             <Input id="parent_name" {...register('parent_name')} />
             {errors.parent_name && <p className="text-xs text-red-500">{errors.parent_name.message}</p>}
           </div>
+
+          {/* Relationship — required, Controller */}
           <div className="space-y-2">
             <Label>Relationship *</Label>
-            <Select onValueChange={(v) => setValue('parent_relationship', v)}>
-              <SelectTrigger><SelectValue placeholder="Select relationship" /></SelectTrigger>
-              <SelectContent>
-                {RELATIONSHIPS.map((r) => <SelectItem key={r} value={r.toLowerCase()}>{r}</SelectItem>)}
-              </SelectContent>
-            </Select>
+            <Controller
+              name="parent_relationship"
+              control={control}
+              render={({ field }) => (
+                <Select onValueChange={field.onChange} value={field.value ?? ''}>
+                  <SelectTrigger><SelectValue placeholder="Select relationship" /></SelectTrigger>
+                  <SelectContent>
+                    {RELATIONSHIPS.map((r) => (
+                      <SelectItem key={r} value={r.toLowerCase()}>{r}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
             {errors.parent_relationship && <p className="text-xs text-red-500">{errors.parent_relationship.message}</p>}
           </div>
+
           <div className="space-y-2">
             <Label htmlFor="parent_email">Email Address *</Label>
             <Input id="parent_email" type="email" {...register('parent_email')} />

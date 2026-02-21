@@ -1,7 +1,8 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
-import { requirePermission, getAuthenticatedProfile } from '@/lib/rbac/check'
+import { createAdminClient } from '@/lib/supabase/admin'
+import { requirePermission } from '@/lib/rbac/check'
 import { applicationSchema } from '@/lib/validations/application'
 import { sendEmail } from '@/lib/email/client'
 import { ConfirmationEmail } from '@/lib/email/templates/confirmation'
@@ -20,7 +21,11 @@ export async function submitPublicApplication(
     const result = applicationSchema.safeParse(raw)
 
     if (!result.success) {
-      throw new ValidationError('Please fix the errors below', result.error.flatten().fieldErrors)
+      // Zod v4-compatible flatten with message mapper
+      throw new ValidationError(
+        'Please fix the errors below',
+        result.error.flatten((iss) => iss.message).fieldErrors as Record<string, string[]>,
+      )
     }
 
     const supabase = await createClient()
@@ -36,8 +41,9 @@ export async function submitPublicApplication(
 
     if (error || !app) throw new Error(error?.message ?? 'Failed to save application')
 
-    // Insert initial status history
-    await supabase.from('application_status_history').insert({
+    // Use admin client for status history — RLS blocks anonymous inserts on this table
+    const admin = createAdminClient()
+    await admin.from('application_status_history').insert({
       application_id: app.id,
       from_status:    null,
       to_status:      'submitted',
@@ -73,7 +79,10 @@ export async function createManualApplication(
     const result = applicationSchema.safeParse(raw)
 
     if (!result.success) {
-      throw new ValidationError('Please fix the errors below', result.error.flatten().fieldErrors)
+      throw new ValidationError(
+        'Please fix the errors below',
+        result.error.flatten((iss) => iss.message).fieldErrors as Record<string, string[]>,
+      )
     }
 
     const supabase = await createClient()

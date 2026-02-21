@@ -1,13 +1,12 @@
 'use client'
 
-import { useState, useTransition, useRef } from 'react'
+import { useState, useTransition } from 'react'
 import Image from 'next/image'
 import { toast } from 'sonner'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { uploadMedia, deleteMedia } from '@/actions/media/upload'
+import { deleteMedia } from '@/actions/media/upload'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Card, CardContent } from '@/components/ui/card'
 import {
@@ -20,6 +19,7 @@ import {
   LayoutGrid, LayoutList, Search,
   ChevronLeft, ChevronRight,
 } from 'lucide-react'
+import UploadModal from './UploadModal'
 import type { MediaFile, PaginationMeta, MediaContext } from '@/types/app'
 
 const CONTEXTS: { value: MediaContext; label: string }[] = [
@@ -49,14 +49,12 @@ interface Props {
 }
 
 export default function MediaLibrary({ initialFiles, meta }: Props) {
-  const [files]              = useState<MediaFile[]>(initialFiles)
-  const [view, setView]      = useState<'grid' | 'list'>('grid')
-  const [uploading, start]   = useTransition()
-  const [toDelete, setToDelete]       = useState<MediaFile | null>(null)
-  const [altText, setAltText]         = useState('')
-  const [uploadContext, setUploadContext] = useState<MediaContext>('gallery')
+  const [files]                = useState<MediaFile[]>(initialFiles)
+  const [view, setView]        = useState<'grid' | 'list'>('grid')
+  const [deleting, startDelete] = useTransition()
+  const [toDelete, setToDelete] = useState<MediaFile | null>(null)
+  const [uploadOpen, setUploadOpen] = useState(false)
   const [searchDraft, setSearchDraft] = useState('')
-  const fileInputRef = useRef<HTMLInputElement>(null)
   const router       = useRouter()
   const searchParams = useSearchParams()
 
@@ -69,31 +67,9 @@ export default function MediaLibrary({ initialFiles, meta }: Props) {
     router.push(`?${params.toString()}`)
   }
 
-  async function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0]
-    if (!file) return
-
-    const fd = new FormData()
-    fd.set('file', file)
-    fd.set('context', uploadContext)
-    fd.set('alt_text', altText)
-
-    start(async () => {
-      const res = await uploadMedia(fd)
-      if (fileInputRef.current) fileInputRef.current.value = ''
-      if (res.success) {
-        toast.success('Image uploaded')
-        setAltText('')
-        router.refresh()
-      } else {
-        toast.error(res.error)
-      }
-    })
-  }
-
   async function handleDelete() {
     if (!toDelete) return
-    start(async () => {
+    startDelete(async () => {
       const res = await deleteMedia(toDelete.id)
       if (res.success) {
         toast.success('File deleted')
@@ -111,60 +87,18 @@ export default function MediaLibrary({ initialFiles, meta }: Props) {
   return (
     <div className="space-y-5">
 
-      {/* ── Upload panel ───────────────────────────────────────── */}
-      <Card>
-        <CardContent className="pt-6">
-          <div className="flex flex-wrap gap-4 items-end">
-            <div className="space-y-1.5">
-              <Label>Context</Label>
-              <Select value={uploadContext} onValueChange={(v) => setUploadContext(v as MediaContext)}>
-                <SelectTrigger className="w-40">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {CONTEXTS.map((c) => (
-                    <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-1.5">
-              <Label htmlFor="alt-text">Alt text</Label>
-              <Input
-                id="alt-text"
-                placeholder="Describe the image…"
-                value={altText}
-                onChange={(e) => setAltText(e.target.value)}
-                className="w-64"
-              />
-            </div>
-
-            <Label
-              htmlFor="file-upload"
-              className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-[#1e3a5f] text-white rounded-md text-sm font-medium hover:bg-[#16305a] transition-colors"
-            >
-              {uploading
-                ? <Loader2 className="w-4 h-4 animate-spin" />
-                : <Upload className="w-4 h-4" />}
-              {uploading ? 'Uploading…' : 'Upload Image'}
-            </Label>
-            <input
-              ref={fileInputRef}
-              id="file-upload"
-              type="file"
-              accept="image/jpeg,image/png,image/webp"
-              className="hidden"
-              onChange={handleUpload}
-              disabled={uploading}
-            />
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* ── Toolbar: search / filter / view toggle ─────────────── */}
+      {/* ── Toolbar: upload / search / filter / view toggle ────────── */}
       <div className="flex flex-wrap gap-3 items-center justify-between">
         <div className="flex flex-wrap gap-3 items-center">
+          {/* Upload button */}
+          <Button
+            className="bg-[#1e3a5f] hover:bg-[#16305a] gap-2"
+            onClick={() => setUploadOpen(true)}
+          >
+            <Upload className="w-4 h-4" />
+            Upload Image
+          </Button>
+
           {/* Search */}
           <form
             onSubmit={(e) => {
@@ -243,7 +177,7 @@ export default function MediaLibrary({ initialFiles, meta }: Props) {
         </div>
       </div>
 
-      {/* ── Empty state ────────────────────────────────────────── */}
+      {/* ── Empty state ────────────────────────────────────────────── */}
       {files.length === 0 ? (
         <div className="text-center py-20 text-slate-400">
           <ImageIcon className="w-16 h-16 mx-auto mb-4 opacity-25" />
@@ -251,12 +185,12 @@ export default function MediaLibrary({ initialFiles, meta }: Props) {
           <p className="text-sm mt-1">
             {activeSearch || activeContext
               ? 'Try clearing your filters.'
-              : 'Upload your first image above.'}
+              : 'Upload your first image using the button above.'}
           </p>
         </div>
 
       ) : view === 'grid' ? (
-        /* ── Grid view ─────────────────────────────────────────── */
+        /* ── Grid view ─────────────────────────────────────────────── */
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
           {files.map((file) => (
             <div
@@ -305,7 +239,7 @@ export default function MediaLibrary({ initialFiles, meta }: Props) {
         </div>
 
       ) : (
-        /* ── List view ─────────────────────────────────────────── */
+        /* ── List view ─────────────────────────────────────────────── */
         <div className="rounded-lg border overflow-hidden">
           <table className="w-full text-sm">
             <thead className="bg-slate-50 border-b">
@@ -387,7 +321,7 @@ export default function MediaLibrary({ initialFiles, meta }: Props) {
         </div>
       )}
 
-      {/* ── Pagination ─────────────────────────────────────────── */}
+      {/* ── Pagination ─────────────────────────────────────────────── */}
       {meta.totalPages > 1 && (
         <div className="flex items-center justify-between text-sm text-slate-500 pt-1">
           <span>
@@ -415,7 +349,14 @@ export default function MediaLibrary({ initialFiles, meta }: Props) {
         </div>
       )}
 
-      {/* ── Delete confirm dialog (single instance) ────────────── */}
+      {/* ── Upload modal ────────────────────────────────────────────── */}
+      <UploadModal
+        open={uploadOpen}
+        onClose={() => setUploadOpen(false)}
+        onUploaded={() => router.refresh()}
+      />
+
+      {/* ── Delete confirm dialog ────────────────────────────────────── */}
       <Dialog open={!!toDelete} onOpenChange={(open) => { if (!open) setToDelete(null) }}>
         <DialogContent>
           <DialogHeader>
@@ -426,11 +367,11 @@ export default function MediaLibrary({ initialFiles, meta }: Props) {
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setToDelete(null)} disabled={uploading}>
+            <Button variant="outline" onClick={() => setToDelete(null)} disabled={deleting}>
               Cancel
             </Button>
-            <Button variant="destructive" onClick={handleDelete} disabled={uploading}>
-              {uploading && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
+            <Button variant="destructive" onClick={handleDelete} disabled={deleting}>
+              {deleting && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
               Delete
             </Button>
           </DialogFooter>

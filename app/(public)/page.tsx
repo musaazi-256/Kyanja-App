@@ -1,47 +1,29 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { CheckCircle, BookOpen, Users, Star, ArrowRight, GraduationCap, Heart, Globe } from 'lucide-react'
+import { BookOpen, Users, Star, ArrowRight, GraduationCap, Heart, Globe } from 'lucide-react'
+import HeroSection from '@/components/public/hero/HeroSection'
+import { getSetting } from '@/lib/db/settings'
 
-export default function HomePage() {
+export default async function HomePage() {
   const year = new Date().getFullYear()
   const startYear = new Date().getMonth() >= 7 ? year : year - 1
   const academicYear = `${startYear}/${startYear + 1}`
 
+  // Fetch variant-specific hero URLs in parallel; fall back to legacy single key.
+  const [heroDesktop, heroMobile, heroLegacy] = await Promise.all([
+    getSetting('hero_image_url_desktop'),
+    getSetting('hero_image_url_mobile'),
+    getSetting('hero_image_url'),
+  ])
+
+  const desktopUrl = heroDesktop || heroLegacy || undefined
+  const mobileUrl  = heroMobile  || heroLegacy || undefined
+
   return (
     <div>
       {/* Hero */}
-      <section className="relative bg-gradient-to-br from-[#1e3a5f] via-[#1e3a5f] to-[#2d5a8e] text-white py-24 px-4 overflow-hidden">
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-20 left-20 w-72 h-72 bg-white rounded-full blur-3xl" />
-          <div className="absolute bottom-10 right-20 w-96 h-96 bg-blue-300 rounded-full blur-3xl" />
-        </div>
-        <div className="relative max-w-6xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 bg-white/10 rounded-full px-4 py-1.5 text-sm mb-6">
-            <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-            <span>Enrolling for {academicYear} Academic Year</span>
-          </div>
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6">
-            Nurturing Young Minds<br />
-            <span className="text-blue-300">for a Bright Future</span>
-          </h1>
-          <p className="text-xl text-white/80 max-w-2xl mx-auto mb-10">
-            Kyanja Junior School provides quality, holistic education in a safe and
-            nurturing environment. We develop confident, creative, and compassionate learners.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button asChild size="lg" className="bg-white text-[#1e3a5f] hover:bg-white/90 font-semibold">
-              <Link href="/admissions/apply">
-                Apply for Admission
-                <ArrowRight className="w-5 h-5 ml-2" />
-              </Link>
-            </Button>
-            <Button asChild size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10">
-              <Link href="/about">Learn More About Us</Link>
-            </Button>
-          </div>
-        </div>
-      </section>
+      <HeroSection academicYear={academicYear} desktopUrl={desktopUrl} mobileUrl={mobileUrl} />
 
       {/* Stats bar */}
       <section className="bg-[#16305a] text-white py-6 px-4">

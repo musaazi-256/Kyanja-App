@@ -91,7 +91,7 @@ export default async function SettingsPage() {
               <Globe className="w-4 h-4" />
               Public Site
             </CardTitle>
-            <CardDescription>Manage homepage content — coming soon</CardDescription>
+            <CardDescription>Additional homepage settings — coming soon</CardDescription>
           </CardHeader>
         </Card>
       </div>

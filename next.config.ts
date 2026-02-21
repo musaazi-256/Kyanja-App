@@ -18,6 +18,10 @@ const nextConfig: NextConfig = {
         hostname: '*.supabase.co',
         pathname: '/storage/v1/render/image/public/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'i.ibb.co',
+      },
     ],
   },
   // Needed for react-email rendering in Server Actions (Next.js 15+)

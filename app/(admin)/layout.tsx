@@ -3,6 +3,9 @@ import { getCurrentProfile } from '@/lib/db/users'
 import Sidebar from '@/components/admin/layout/Sidebar'
 import Topbar from '@/components/admin/layout/Topbar'
 
+// All dashboard routes are auth-gated and personalised — never statically prerender.
+export const dynamic = 'force-dynamic'
+
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const profile = await getCurrentProfile()
   if (!profile) redirect('/auth/login')

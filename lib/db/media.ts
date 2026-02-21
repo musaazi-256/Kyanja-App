@@ -29,13 +29,18 @@ export async function getMediaFiles(
 }
 
 export async function getGalleryImages(): Promise<MediaFile[]> {
-  const supabase = await createClient()
-  const { data } = await supabase
-    .from('media_files')
-    .select('*')
-    .eq('context', 'gallery')
-    .is('deleted_at', null)
-    .order('sort_order', { ascending: true })
-    .order('created_at', { ascending: false })
-  return (data ?? []) as unknown as MediaFile[]
+  try {
+    const supabase = await createClient()
+    const { data } = await supabase
+      .from('media_files')
+      .select('*')
+      .eq('context', 'gallery')
+      .is('deleted_at', null)
+      .order('sort_order', { ascending: true })
+      .order('created_at', { ascending: false })
+    return (data ?? []) as unknown as MediaFile[]
+  } catch {
+    // Keep public gallery page build-safe when env vars are unavailable at build time.
+    return []
+  }
 }

@@ -1,6 +1,8 @@
 import { getGalleryImages } from '@/lib/db/media'
 import type { Metadata } from 'next'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: 'Gallery',
   description: 'Photos from Kyanja Junior School — events, sports, and everyday school life.',

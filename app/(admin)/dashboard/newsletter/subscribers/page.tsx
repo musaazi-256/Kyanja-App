@@ -17,6 +17,7 @@ export default async function SubscribersPage() {
   await requirePermission('newsletter:subscribers')
   const subscribers = await getSubscribers(false)
   const active = subscribers.filter((s) => s.is_active).length
+  const inactive = subscribers.length - active
 
   return (
     <div className="space-y-6">
@@ -32,9 +33,29 @@ export default async function SubscribersPage() {
 
       <Card>
         <CardContent className="p-0">
+          <div className="px-4 pt-2 pb-3 border-b bg-slate-50/70">
+            <div className="flex flex-wrap items-center gap-4 text-sm">
+              {[
+                ['All', subscribers.length],
+                ['Active', active],
+                ['Unsubscribed', inactive],
+              ].map(([label, count], idx, arr) => (
+                <div key={label as string} className="flex items-center gap-4">
+                  <span className="inline-flex items-center gap-2 pb-2 text-slate-700 font-medium">
+                    <span>{label}</span>
+                    <span className="inline-flex min-w-5 h-5 items-center justify-center rounded-full bg-slate-200 text-slate-600 text-xs px-1.5">
+                      {count as number}
+                    </span>
+                  </span>
+                  {idx < arr.length - 1 && <span className="text-slate-300">|</span>}
+                </div>
+              ))}
+            </div>
+          </div>
+
           <Table>
             <TableHeader>
-              <TableRow>
+              <TableRow className="bg-slate-100/90 hover:bg-slate-100/90">
                 <TableHead>Email</TableHead>
                 <TableHead>Name</TableHead>
                 <TableHead>Status</TableHead>

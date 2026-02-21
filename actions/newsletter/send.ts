@@ -1,10 +1,11 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { requirePermission } from '@/lib/rbac/check'
 import { composeNewsletterSchema } from '@/lib/validations/newsletter'
 import { ok, fail } from '@/lib/utils/response'
-import { ValidationError } from '@/lib/utils/errors'
+import { ValidationError, NotFoundError, AppError } from '@/lib/utils/errors'
 import type { ActionResult } from '@/types/app'
 import { revalidatePath } from 'next/cache'
 
@@ -94,6 +95,83 @@ export async function sendNewsletter(
 
     revalidatePath('/dashboard/newsletter')
     return ok(undefined, `Newsletter queued for ${recipientCount} subscribers`)
+  } catch (err) {
+    return fail(err)
+  }
+}
+
+export async function updateNewsletterDraft(
+  newsletterId: string,
+  formData: FormData,
+): Promise<ActionResult<{ id: string }>> {
+  try {
+    const profile = await requirePermission('newsletter:compose')
+
+    const raw = Object.fromEntries(formData.entries())
+    const result = composeNewsletterSchema.safeParse(raw)
+    if (!result.success) {
+      throw new ValidationError('Please fix errors', result.error.flatten().fieldErrors)
+    }
+
+    const supabase = await createClient()
+
+    const { data: existing, error: existingError } = await supabase
+      .from('newsletters')
+      .select('id, status, created_by')
+      .eq('id', newsletterId)
+      .single()
+
+    if (existingError || !existing) throw new NotFoundError('Draft not found')
+    if (existing.status !== 'draft') throw new AppError('Only draft newsletters can be edited', 'INVALID_STATE', 422)
+    if (existing.created_by !== profile.id && profile.role !== 'admin') {
+      throw new AppError('You can only edit your own drafts', 'FORBIDDEN', 403)
+    }
+
+    const { error: updateError } = await supabase
+      .from('newsletters')
+      .update({ ...result.data })
+      .eq('id', newsletterId)
+
+    if (updateError) throw updateError
+
+    revalidatePath('/dashboard/newsletter')
+    revalidatePath('/dashboard/newsletter/compose')
+    return ok({ id: newsletterId }, 'Draft updated')
+  } catch (err) {
+    return fail(err)
+  }
+}
+
+export async function deleteNewsletterDraft(
+  newsletterId: string,
+): Promise<ActionResult<void>> {
+  try {
+    const profile = await requirePermission('newsletter:compose')
+    const supabase = await createClient()
+
+    const { data: existing, error: existingError } = await supabase
+      .from('newsletters')
+      .select('id, status, created_by')
+      .eq('id', newsletterId)
+      .single()
+
+    if (existingError || !existing) throw new NotFoundError('Draft not found')
+    if (existing.status !== 'draft') throw new AppError('Only draft newsletters can be deleted', 'INVALID_STATE', 422)
+    if (existing.created_by !== profile.id && profile.role !== 'admin') {
+      throw new AppError('You can only delete your own drafts', 'FORBIDDEN', 403)
+    }
+
+    const admin = createAdminClient()
+    const { error: deleteError } = await admin
+      .from('newsletters')
+      .delete()
+      .eq('id', newsletterId)
+
+    if (deleteError) throw deleteError
+
+    revalidatePath('/dashboard/newsletter')
+    revalidatePath('/dashboard/newsletter/compose')
+    return ok(undefined, 'Draft deleted')
   } catch (err) {
     return fail(err)
   }

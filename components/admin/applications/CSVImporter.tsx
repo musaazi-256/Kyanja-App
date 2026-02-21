@@ -176,7 +176,7 @@ export default function CSVImporter() {
                 <div className="max-h-64 overflow-y-auto border rounded-lg">
                   <Table>
                     <TableHeader>
-                      <TableRow>
+                      <TableRow className="bg-slate-100/90 hover:bg-slate-100/90">
                         <TableHead className="w-16">Row</TableHead>
                         <TableHead>Field</TableHead>
                         <TableHead>Value</TableHead>

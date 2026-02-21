@@ -3,7 +3,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 const BATCH_SIZE = 50
 const MAX_RETRIES = 3
-const FROM_ADDRESS = 'Kyanja Junior School <noreply@kyanjajunior.ac.ug>'
+const FROM_ADDRESS = 'Kyanja Junior School <noreply@kyanjajuniorschool.com>'
 
 serve(async (req: Request) => {
   // Validate auth header

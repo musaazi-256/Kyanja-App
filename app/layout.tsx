@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   openGraph: {
     type:        'website',
     locale:      'en_UG',
-    url:         'https://kyanjajunior.ac.ug',
+    url:         'https://www.kyanjajuniorschool.com',
     siteName:    'Kyanja Junior School',
     title:       'Kyanja Junior School',
     description: 'Quality education in Kampala, Uganda.',

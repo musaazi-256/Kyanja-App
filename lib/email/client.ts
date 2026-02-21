@@ -1,6 +1,6 @@
 import { Resend } from 'resend'
 
-export const FROM_ADDRESS = 'Kyanja Junior School <noreply@kyanjajunior.ac.ug>'
+export const FROM_ADDRESS = 'Kyanja Junior School <noreply@kyanjajuniorschool.com>'
 export const REPLY_TO     = 'admin@kjsch.com'
 
 function getResend(): Resend {

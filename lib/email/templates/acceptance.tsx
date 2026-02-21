@@ -16,7 +16,7 @@ export function AcceptanceEmail({
   studentName,
   className,
   academicYear,
-  schoolUrl = 'https://kyanjajunior.ac.ug',
+  schoolUrl = 'https://www.kyanjajuniorschool.com',
 }: AcceptanceEmailProps) {
   return (
     <Html>

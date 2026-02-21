@@ -1,4 +1,4 @@
-import { getApplications, getAcademicYears } from '@/lib/db/applications'
+import { getApplications, getAcademicYears, getApplicationStats } from '@/lib/db/applications'
 import { requirePermission } from '@/lib/rbac/check'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
@@ -28,8 +28,9 @@ interface PageProps {
 export default async function ApplicationsPage({ searchParams }: PageProps) {
   await requirePermission('applications:read')
   const params = await searchParams
+  const activeStatus = params.status as ApplicationStatus | undefined
 
-  const [{ data: applications, meta }, academicYears] = await Promise.all([
+  const [{ data: applications, meta }, academicYears, stats] = await Promise.all([
     getApplications({
       status:        params.status as ApplicationStatus | undefined,
       academic_year: params.academic_year,
@@ -37,7 +38,17 @@ export default async function ApplicationsPage({ searchParams }: PageProps) {
       page:          params.page ? parseInt(params.page) : 1,
     }),
     getAcademicYears(),
+    getApplicationStats(),
   ])
+
+  const statusTabs: Array<{ key?: ApplicationStatus; label: string; count: number }> = [
+    { label: 'All', count: stats.total },
+    { key: 'submitted', label: 'Submitted', count: stats.submitted },
+    { key: 'under_review', label: 'Under Review', count: stats.under_review },
+    { key: 'accepted', label: 'Accepted', count: stats.accepted },
+    { key: 'waitlisted', label: 'Waitlisted', count: stats.waitlisted },
+    { key: 'declined', label: 'Declined', count: stats.declined },
+  ]
 
   return (
     <div className="space-y-6">
@@ -68,9 +79,32 @@ export default async function ApplicationsPage({ searchParams }: PageProps) {
 
       <Card>
         <CardContent className="p-0">
+          <div className="px-4 pt-2 pb-3 border-b bg-slate-50/70">
+            <div className="flex flex-wrap items-center gap-4 text-sm">
+              {statusTabs.map((tab, idx) => (
+                <div key={tab.key ?? 'all'} className="flex items-center gap-4">
+                  <Link
+                    href={tab.key ? `/dashboard/applications?status=${tab.key}` : '/dashboard/applications'}
+                    className={`inline-flex items-center gap-2 pb-2 border-b-2 transition-colors ${
+                      (tab.key ? activeStatus === tab.key : !activeStatus)
+                        ? 'text-blue-600 border-blue-600 font-medium'
+                        : 'text-slate-600 border-transparent hover:text-slate-900'
+                    }`}
+                  >
+                    <span>{tab.label}</span>
+                    <span className="inline-flex min-w-5 h-5 items-center justify-center rounded-full bg-slate-200 text-slate-600 text-xs px-1.5">
+                      {tab.count}
+                    </span>
+                  </Link>
+                  {idx < statusTabs.length - 1 && <span className="text-slate-300">|</span>}
+                </div>
+              ))}
+            </div>
+          </div>
+
           <Table>
             <TableHeader>
-              <TableRow>
+              <TableRow className="bg-slate-100/90 hover:bg-slate-100/90">
                 <TableHead>Student</TableHead>
                 <TableHead>Class</TableHead>
                 <TableHead>Academic Year</TableHead>

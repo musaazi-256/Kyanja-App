@@ -75,7 +75,7 @@ export default function LoginForm({ redirectTo, initialError }: { redirectTo?: s
             <Input
               id="email"
               type="email"
-              placeholder="you@kyanjajunior.ac.ug"
+              placeholder="you@kyanjajuniorschool.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required

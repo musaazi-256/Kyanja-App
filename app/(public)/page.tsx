@@ -11,15 +11,25 @@ import {
   Globe,
 } from "lucide-react";
 import HeroSection from "@/components/public/hero/HeroSection";
+import { getSetting } from "@/lib/db/settings";
 
 export default async function HomePage() {
   const year = new Date().getFullYear();
   const startYear = new Date().getMonth() >= 7 ? year : year - 1;
   const academicYear = `${startYear}/${startYear + 1}`;
 
+  // Fetch hero image URLs; fall back to legacy single key; ignore errors (e.g. missing credentials locally)
+  const [heroDesktop, heroMobile, heroLegacy] = await Promise.all([
+    getSetting("hero_image_url_desktop").catch(() => ""),
+    getSetting("hero_image_url_mobile").catch(() => ""),
+    getSetting("hero_image_url").catch(() => ""),
+  ]);
+  const desktopUrl = heroDesktop || heroLegacy || undefined;
+  const mobileUrl  = heroMobile  || heroLegacy || undefined;
+
   return (
     <div>
-      <HeroSection />
+      <HeroSection desktopUrl={desktopUrl} mobileUrl={mobileUrl} />
 
       {/* Stats bar */}
       <section className="bg-[#16305a] text-white py-6 px-4">

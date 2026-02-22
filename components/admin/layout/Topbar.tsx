@@ -46,7 +46,7 @@ export default function Topbar({ profile }: Props) {
           </Button>
         </SheetTrigger>
         <SheetContent side="left" className="p-0 w-64">
-          <Sidebar onClose={() => setOpen(false)} />
+          <Sidebar role={profile?.role} onClose={() => setOpen(false)} />
         </SheetContent>
       </Sheet>
 

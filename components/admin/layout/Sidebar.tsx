@@ -7,22 +7,29 @@ import {
   LayoutDashboard, Users, FileText, Mail, Image,
   ChevronRight, BookOpen, Settings,
 } from 'lucide-react'
+import { hasPermission } from '@/lib/rbac/permissions'
+import type { Permission } from '@/types/rbac'
 
-const NAV = [
-  { label: 'Dashboard',     href: '/dashboard',                   icon: LayoutDashboard },
-  { label: 'Applications',  href: '/dashboard/applications',      icon: FileText },
-  { label: 'Newsletter',    href: '/dashboard/newsletter',        icon: Mail },
-  { label: 'Media Library', href: '/dashboard/media',             icon: Image },
-  { label: 'Users',         href: '/dashboard/users',             icon: Users },
-  { label: 'Settings',      href: '/dashboard/settings',          icon: Settings },
+const NAV: { label: string; href: string; icon: React.ElementType; permission: Permission | null }[] = [
+  { label: 'Dashboard',     href: '/dashboard',              icon: LayoutDashboard, permission: null },
+  { label: 'Applications',  href: '/dashboard/applications', icon: FileText,        permission: 'applications:read' },
+  { label: 'Newsletter',    href: '/dashboard/newsletter',   icon: Mail,            permission: 'newsletter:read' },
+  { label: 'Media Library', href: '/dashboard/media',        icon: Image,           permission: 'media:read' },
+  { label: 'Users',         href: '/dashboard/users',        icon: Users,           permission: 'users:read' },
+  { label: 'Settings',      href: '/dashboard/settings',     icon: Settings,        permission: null },
 ]
 
 interface Props {
+  role?: string
   onClose?: () => void
 }
 
-export default function Sidebar({ onClose }: Props) {
+export default function Sidebar({ role, onClose }: Props) {
   const pathname = usePathname()
+
+  const visibleNav = NAV.filter(
+    ({ permission }) => !permission || hasPermission(role ?? '', permission),
+  )
 
   return (
     <div className="flex flex-col h-full bg-[#1e3a5f] text-white w-64">
@@ -39,7 +46,7 @@ export default function Sidebar({ onClose }: Props) {
 
       {/* Navigation */}
       <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
-        {NAV.map(({ label, href, icon: Icon }) => {
+        {visibleNav.map(({ label, href, icon: Icon }) => {
           const active = href === '/dashboard'
             ? pathname === '/dashboard'
             : pathname.startsWith(href)

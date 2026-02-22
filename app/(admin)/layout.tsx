@@ -14,7 +14,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     <div className="flex h-screen overflow-hidden bg-slate-50">
       {/* Desktop sidebar */}
       <div className="hidden lg:flex lg:shrink-0">
-        <Sidebar />
+        <Sidebar role={profile.role} />
       </div>
 
       {/* Main area */}

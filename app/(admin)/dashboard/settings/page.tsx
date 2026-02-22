@@ -1,4 +1,4 @@
-import { requirePermission } from '@/lib/rbac/check'
+import { getAuthenticatedProfile } from '@/lib/rbac/check'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
@@ -7,7 +7,7 @@ import { Shield, Bell, Globe, Database } from 'lucide-react'
 export const metadata = { title: 'Settings — Kyanja Junior Admin' }
 
 export default async function SettingsPage() {
-  const profile = await requirePermission('users:read')
+  const profile = await getAuthenticatedProfile()
 
   return (
     <div className="space-y-6">

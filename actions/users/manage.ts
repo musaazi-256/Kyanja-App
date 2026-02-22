@@ -80,7 +80,7 @@ export async function inviteUser(formData: FormData): Promise<ActionResult<void>
         500,
       )
     }
-    const redirectTo = `${siteUrl}/auth/callback`
+    const redirectTo = `${siteUrl}/auth/callback?next=/auth/set-password`
 
     // Generate the invite link without Supabase sending any email.
     const { data: linkData, error: linkError } = await admin.auth.admin.generateLink({

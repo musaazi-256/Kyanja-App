@@ -14,7 +14,7 @@ export default function HeroSection({ desktopUrl, mobileUrl }: Props) {
 
         {/* Left Column */}
         <div className="w-full lg:w-1/2 z-10 lg:pr-10">
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-[6rem] font-light text-white mb-6 leading-[1.1] text-center lg:text-left">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl min-[1040px]:text-[4.8rem] xl:text-[6rem] font-light text-white mb-6 leading-[1.1] text-center lg:text-left">
             <span className="font-bold">Education</span> is
             <br />a <span className="font-medium">Treasure</span>
           </h1>

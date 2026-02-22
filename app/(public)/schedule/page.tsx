@@ -24,15 +24,16 @@ export default async function SchedulePage() {
   const events      = await fetchCalendarEvents()
   const currentYear = new Date().getFullYear()
 
-  // mode=MONTH  → full month grid as default view
-  // showTabs=1  → lets visitors switch between Month / Week / Agenda tabs themselves
-  // showNav=1   → prev / next arrows for browsing months / weeks
-  const calendarEmbedSrc =
+  const calendarBase =
     `https://calendar.google.com/calendar/embed` +
     `?src=${encodeURIComponent(SCHOOL_CALENDAR_ID)}` +
     `&ctz=Africa%2FKampala` +
-    `&showTitle=0&showNav=1&showDate=1&showPrint=0&showTabs=1&showCalendars=0` +
-    `&mode=MONTH`
+    `&showTitle=0&showNav=1&showDate=1&showPrint=0&showTabs=0&showCalendars=0`
+
+  // Desktop: full month grid
+  const calendarMonthSrc  = calendarBase + `&mode=MONTH`
+  // Mobile: agenda / schedule list view
+  const calendarAgendaSrc = calendarBase + `&mode=AGENDA`
 
   return (
     <div>
@@ -53,9 +54,22 @@ export default async function SchedulePage() {
               <Calendar className="w-5 h-5 text-[#1e3a5f]" />
               <h2 className="text-2xl font-bold text-slate-900">School Calendar</h2>
             </div>
-            <div className="rounded-2xl overflow-hidden shadow-lg border bg-white">
+            {/* Mobile: agenda/schedule list view */}
+            <div className="rounded-2xl overflow-hidden shadow-lg border bg-white md:hidden">
               <iframe
-                src={calendarEmbedSrc}
+                src={calendarAgendaSrc}
+                style={{ border: 0 }}
+                width="100%"
+                height="560"
+                title="Kyanja Junior School Schedule"
+                loading="lazy"
+              />
+            </div>
+
+            {/* Desktop: full month grid */}
+            <div className="rounded-2xl overflow-hidden shadow-lg border bg-white hidden md:block">
+              <iframe
+                src={calendarMonthSrc}
                 style={{ border: 0 }}
                 width="100%"
                 height="700"

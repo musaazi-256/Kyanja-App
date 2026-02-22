@@ -9,21 +9,6 @@ interface Props {
 export default function HeroSection({ desktopUrl, mobileUrl }: Props) {
   return (
     <section className="relative bg-white py-10 md:py-14 overflow-hidden">
-
-      {/* Mobile image — only rendered on small screens when uploaded */}
-      {mobileUrl && (
-        <div className="relative w-full h-64 overflow-hidden lg:hidden mb-4">
-          <Image
-            src={mobileUrl}
-            alt="Kyanja Junior School"
-            fill
-            priority
-            className="object-cover object-center"
-            sizes="100vw"
-          />
-        </div>
-      )}
-
       {/* Container card */}
       <div className="container bg-blue-900 mx-auto px-6 py-8 md:py-10 rounded-3xl flex flex-col lg:flex-row items-center gap-8 justify-between">
 
@@ -67,17 +52,32 @@ export default function HeroSection({ desktopUrl, mobileUrl }: Props) {
           </div>
         </div>
 
-        {/* Right Column — desktop image, hidden on mobile */}
-        <div className="hidden lg:flex w-full lg:w-1/2 relative items-center justify-center">
+        {/* Right Column — hidden on mobile if no mobile image uploaded */}
+        <div className={`w-full lg:w-1/2 relative flex items-center justify-center${!mobileUrl ? ' hidden lg:flex' : ''}`}>
 
-          {/* Decorative blobs */}
-          <div className="absolute top-0 right-0 w-40 h-40 bg-[#fbbf24] rounded-full mix-blend-multiply opacity-80 translate-x-12 -translate-y-12 z-0" />
-          <div className="absolute bottom-4 left-4 w-12 h-12 bg-blue-400 rounded-full z-0 -translate-x-8 translate-y-8" />
-          <div className="absolute top-1/2 left-0 w-4 h-4 bg-purple-400 rounded-full z-0 -translate-x-6" />
-          <div className="absolute bottom-0 right-10 w-6 h-6 bg-green-500 rounded-full z-0 translate-y-10" />
+          {/* Decorative blobs (desktop only) */}
+          <div className="hidden lg:block absolute top-0 right-0 w-40 h-40 bg-[#fbbf24] rounded-full mix-blend-multiply opacity-80 translate-x-12 -translate-y-12 z-0" />
+          <div className="hidden lg:block absolute bottom-4 left-4 w-12 h-12 bg-blue-400 rounded-full z-0 -translate-x-8 translate-y-8" />
+          <div className="hidden lg:block absolute top-1/2 left-0 w-4 h-4 bg-purple-400 rounded-full z-0 -translate-x-6" />
+          <div className="hidden lg:block absolute bottom-0 right-10 w-6 h-6 bg-green-500 rounded-full z-0 translate-y-10" />
 
+          {/* Mobile image — visible below lg, hidden on desktop */}
+          {mobileUrl && (
+            <div className="relative w-full aspect-video overflow-hidden rounded-2xl shadow-lg z-10 lg:hidden">
+              <Image
+                src={mobileUrl}
+                alt="Kyanja Junior School"
+                fill
+                priority
+                className="object-cover object-center"
+                sizes="100vw"
+              />
+            </div>
+          )}
+
+          {/* Desktop image — visible on lg+, hidden on mobile */}
           {desktopUrl ? (
-            <div className="relative w-full aspect-4/3 overflow-hidden rounded-3xl shadow-lg z-10">
+            <div className="relative w-full aspect-4/3 overflow-hidden rounded-3xl shadow-lg z-10 hidden lg:block">
               <Image
                 src={desktopUrl}
                 alt="Kyanja Junior School"
@@ -88,15 +88,14 @@ export default function HeroSection({ desktopUrl, mobileUrl }: Props) {
               />
             </div>
           ) : (
-            /* Placeholder shown when no desktop image is uploaded */
-            <div className="relative w-full aspect-4/3 rounded-3xl z-10 bg-blue-800/50 border-2 border-dashed border-blue-600 flex items-center justify-center">
+            <div className="relative w-full aspect-4/3 rounded-3xl z-10 bg-blue-800/50 border-2 border-dashed border-blue-600 hidden lg:flex items-center justify-center">
               <p className="text-blue-400 text-sm text-center px-4">
                 Upload a desktop hero image<br />via the admin Media Library
               </p>
             </div>
           )}
-        </div>
 
+        </div>
       </div>
     </section>
   );

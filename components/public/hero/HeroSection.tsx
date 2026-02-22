@@ -10,9 +10,9 @@ export default function HeroSection({ desktopUrl, mobileUrl }: Props) {
   return (
     <section className="relative bg-white py-10 md:py-14 overflow-hidden">
 
-      {/* Mobile-only hero image (shown above the card when uploaded) */}
+      {/* Mobile image — only rendered on small screens when uploaded */}
       {mobileUrl && (
-        <div className="relative w-full h-56 overflow-hidden lg:hidden mb-4">
+        <div className="relative w-full h-64 overflow-hidden lg:hidden mb-4">
           <Image
             src={mobileUrl}
             alt="Kyanja Junior School"
@@ -29,7 +29,6 @@ export default function HeroSection({ desktopUrl, mobileUrl }: Props) {
 
         {/* Left Column */}
         <div className="w-full lg:w-1/2 z-10 lg:pr-10">
-
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-[6rem] font-light text-white mb-6 leading-[1.1] text-center lg:text-left">
             <span className="font-bold">Education</span> is
             <br />a <span className="font-medium">Treasure</span>
@@ -68,8 +67,8 @@ export default function HeroSection({ desktopUrl, mobileUrl }: Props) {
           </div>
         </div>
 
-        {/* Right Column */}
-        <div className="w-full lg:w-1/2 relative">
+        {/* Right Column — desktop image, hidden on mobile */}
+        <div className="hidden lg:flex w-full lg:w-1/2 relative items-center justify-center">
 
           {/* Decorative blobs */}
           <div className="absolute top-0 right-0 w-40 h-40 bg-[#fbbf24] rounded-full mix-blend-multiply opacity-80 translate-x-12 -translate-y-12 z-0" />
@@ -78,7 +77,6 @@ export default function HeroSection({ desktopUrl, mobileUrl }: Props) {
           <div className="absolute bottom-0 right-10 w-6 h-6 bg-green-500 rounded-full z-0 translate-y-10" />
 
           {desktopUrl ? (
-            /* Uploaded desktop image */
             <div className="relative w-full aspect-4/3 overflow-hidden rounded-3xl shadow-lg z-10">
               <Image
                 src={desktopUrl}
@@ -86,56 +84,19 @@ export default function HeroSection({ desktopUrl, mobileUrl }: Props) {
                 fill
                 priority
                 className="object-cover object-center"
-                sizes="(max-width: 1024px) 100vw, 50vw"
+                sizes="50vw"
               />
             </div>
           ) : (
-            /* Default 2×2 image grid */
-            <div className="grid grid-cols-2 gap-4 md:gap-6 relative z-10 w-full max-w-[500px] mx-auto lg:ml-auto lg:mr-0">
-
-              {/* Top Left: Circle */}
-              <div className="relative aspect-square overflow-hidden rounded-full shadow-lg bg-gray-100">
-                <Image
-                  src="https://i.ibb.co/Qf4g4Lq/image-5.png"
-                  alt="Student 1"
-                  fill
-                  className="object-cover"
-                />
-              </div>
-
-              {/* Top Right: Rounded square, offset down */}
-              <div className="relative aspect-square overflow-hidden rounded-[2.5rem] shadow-lg translate-y-6 bg-gray-100">
-                <Image
-                  src="https://i.ibb.co/9tVz6S9/image-6.png"
-                  alt="Student 2"
-                  fill
-                  className="object-cover"
-                />
-              </div>
-
-              {/* Bottom Left: Rounded square, offset up */}
-              <div className="relative aspect-square overflow-hidden rounded-[2.5rem] shadow-lg -translate-y-4 bg-gray-100">
-                <Image
-                  src="https://i.ibb.co/w4S41Xv/image-7.png"
-                  alt="Student 3"
-                  fill
-                  className="object-cover"
-                />
-              </div>
-
-              {/* Bottom Right: Arch shape */}
-              <div className="relative aspect-square overflow-hidden rounded-t-full rounded-b-[2rem] shadow-lg bg-gray-100">
-                <Image
-                  src="https://i.ibb.co/Z8gSg2L/image-8.png"
-                  alt="Student 4"
-                  fill
-                  className="object-cover"
-                />
-              </div>
-
+            /* Placeholder shown when no desktop image is uploaded */
+            <div className="relative w-full aspect-4/3 rounded-3xl z-10 bg-blue-800/50 border-2 border-dashed border-blue-600 flex items-center justify-center">
+              <p className="text-blue-400 text-sm text-center px-4">
+                Upload a desktop hero image<br />via the admin Media Library
+              </p>
             </div>
           )}
         </div>
+
       </div>
     </section>
   );

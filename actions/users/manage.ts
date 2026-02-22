@@ -72,8 +72,15 @@ export async function inviteUser(formData: FormData): Promise<ActionResult<void>
     }
 
     const admin = createAdminClient()
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, '') ?? ''
-    const redirectTo = siteUrl ? `${siteUrl}/auth/callback` : undefined
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, '')
+    if (!siteUrl) {
+      throw new AppError(
+        'NEXT_PUBLIC_SITE_URL is not set. Add it to your Vercel environment variables (e.g. https://www.kyanjajuniorschool.com) and redeploy.',
+        'CONFIG_ERROR',
+        500,
+      )
+    }
+    const redirectTo = `${siteUrl}/auth/callback`
 
     // Generate the invite link without Supabase sending any email.
     const { data: linkData, error: linkError } = await admin.auth.admin.generateLink({
@@ -204,9 +211,15 @@ export async function sendPasswordResetEmail(formData: FormData): Promise<Action
     if (profileError || !profile) throw new NotFoundError('User not found')
 
     const supabase = await createClient()
-    const redirectTo = process.env.NEXT_PUBLIC_SITE_URL
-      ? `${process.env.NEXT_PUBLIC_SITE_URL.replace(/\/$/, '')}/auth/callback`
-      : undefined
+    const siteUrlReset = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, '')
+    if (!siteUrlReset) {
+      throw new AppError(
+        'NEXT_PUBLIC_SITE_URL is not set. Add it to your Vercel environment variables (e.g. https://www.kyanjajuniorschool.com) and redeploy.',
+        'CONFIG_ERROR',
+        500,
+      )
+    }
+    const redirectTo = `${siteUrlReset}/auth/callback`
 
     const { error } = await supabase.auth.resetPasswordForEmail(profile.email, { redirectTo })
     if (error) throw new AppError(error.message, 'AUTH_ERROR', 400)

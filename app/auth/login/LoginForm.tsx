@@ -14,8 +14,14 @@ function toUserFriendlyError(message: string) {
   const msg = message.toLowerCase()
   if (msg.includes('invalid login credentials')) return 'Invalid email or password.'
   if (msg.includes('email not confirmed')) return 'Email is not confirmed yet.'
-  if (msg.includes('failed to fetch') || msg.includes('network') || msg.includes('fetch')) {
-    return 'Could not reach authentication service. Check Supabase URL and keys.'
+  if (
+    msg.includes('failed to fetch') ||
+    msg.includes('network') ||
+    msg.includes('unexpected end of json') ||
+    msg.includes("failed to execute 'json'") ||
+    msg.includes('fetch')
+  ) {
+    return 'Could not reach the authentication service. Your Supabase project may be paused — visit your Supabase dashboard to resume it.'
   }
   return message
 }

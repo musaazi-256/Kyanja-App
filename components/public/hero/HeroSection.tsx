@@ -11,7 +11,6 @@ export default function HeroSection({ desktopUrl, mobileUrl }: Props) {
     <section className="relative bg-white py-10 md:py-14 overflow-hidden">
       {/* Container card */}
       <div className="container bg-blue-900 mx-auto px-6 py-8 md:py-10 rounded-3xl flex flex-col lg:flex-row items-center gap-8 justify-between">
-
         {/* Left Column */}
         <div className="w-full lg:w-1/2 z-10 lg:pr-10">
           <h1 className="text-4xl sm:text-5xl md:text-6xl min-[1040px]:text-[4.8rem] xl:text-[6rem] font-light text-white mb-6 leading-[1.1] text-center lg:text-left">
@@ -20,7 +19,7 @@ export default function HeroSection({ desktopUrl, mobileUrl }: Props) {
           </h1>
 
           <p className="text-blue-300 text-sm text-center lg:text-left mb-10 max-w-md mx-auto lg:mx-0">
-            Our mission: To produce a well-rounded, educated learner who is
+            Our mission is to produce a well-rounded, educated learner who is
             spiritual, moral, social, focused, holistic, and self-reliant.
           </p>
 
@@ -41,7 +40,11 @@ export default function HeroSection({ desktopUrl, mobileUrl }: Props) {
               className="flex items-center gap-3 text-white font-bold text-sm tracking-wide hover:opacity-80 transition-opacity group"
             >
               <span className="flex items-center justify-center w-10 h-10 bg-[#0052FF] group-hover:bg-blue-700 transition-colors rounded-full text-white shadow-md">
-                <svg className="w-4 h-4 ml-1" fill="currentColor" viewBox="0 0 20 20">
+                <svg
+                  className="w-4 h-4 ml-1"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
                   <path d="M4.5 3.5l12 6.5-12 6.5v-13z" />
                 </svg>
               </span>
@@ -69,7 +72,6 @@ export default function HeroSection({ desktopUrl, mobileUrl }: Props) {
 
         {/* Right Column — desktop only */}
         <div className="hidden lg:flex w-full lg:w-1/2 relative items-center justify-center">
-
           {/* Decorative blobs */}
           <div className="absolute top-0 right-0 w-40 h-40 bg-[#fbbf24] rounded-full mix-blend-multiply opacity-80 translate-x-12 -translate-y-12 z-0" />
           <div className="absolute bottom-4 left-4 w-12 h-12 bg-blue-400 rounded-full z-0 -translate-x-8 translate-y-8" />
@@ -90,11 +92,12 @@ export default function HeroSection({ desktopUrl, mobileUrl }: Props) {
           ) : (
             <div className="relative w-full aspect-4/3 rounded-3xl z-10 bg-blue-800/50 border-2 border-dashed border-blue-600 flex items-center justify-center">
               <p className="text-blue-400 text-sm text-center px-4">
-                Upload a desktop hero image<br />via the admin Media Library
+                Upload a desktop hero image
+                <br />
+                via the admin Media Library
               </p>
             </div>
           )}
-
         </div>
       </div>
     </section>

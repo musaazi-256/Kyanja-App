@@ -207,7 +207,7 @@ export default function MediaLibrary({ initialFiles, meta }: Props) {
             >
               {file.public_url ? (
                 <Image
-                  src={`${file.public_url}?width=300&height=300`}
+                  src={file.public_url}
                   alt={file.alt_text ?? file.file_name}
                   fill
                   className="object-cover"
@@ -268,7 +268,7 @@ export default function MediaLibrary({ initialFiles, meta }: Props) {
                     <div className="relative w-11 h-11 rounded overflow-hidden bg-slate-100 shrink-0">
                       {file.public_url ? (
                         <Image
-                          src={`${file.public_url}?width=88&height=88`}
+                          src={file.public_url}
                           alt={file.alt_text ?? file.file_name}
                           fill
                           className="object-cover"

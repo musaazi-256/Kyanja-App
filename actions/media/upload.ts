@@ -89,9 +89,10 @@ export async function uploadMedia(formData: FormData): Promise<ActionResult<{ ur
 export async function deleteMedia(id: string): Promise<ActionResult<void>> {
   try {
     await requirePermission('media:delete')
-    const supabase = await createClient()
+    // Use admin client to bypass RLS — permission is already enforced above.
+    const admin = createAdminClient()
 
-    const { error } = await supabase
+    const { error } = await admin
       .from('media_files')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', id)

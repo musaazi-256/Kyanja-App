@@ -23,7 +23,7 @@ export default async function ComposePage({ searchParams }: { searchParams: Prom
     : undefined
 
   return (
-    <div className="max-w-3xl space-y-6">
+    <div className="max-w-6xl space-y-6">
       <div className="flex items-center gap-4">
         <Button asChild variant="ghost" size="sm">
           <Link href="/dashboard/newsletter"><ArrowLeft className="w-4 h-4 mr-1" />Back</Link>

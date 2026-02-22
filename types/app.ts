@@ -82,6 +82,28 @@ export interface MediaFilters {
   pageSize?: number
 }
 
+// ─── Newsletter with relations ────────────────────────────────────────────────
+export type SubscriberSelectItem = {
+  id: string
+  email: string
+  full_name: string | null
+}
+
+export type NewsletterSendWithSubscriber = {
+  id: string
+  status: string
+  sent_at: string | null
+  failed_at: string | null
+  error_message: string | null
+  retry_count: number
+  provider_msg_id: string | null
+  newsletter_subscribers: SubscriberSelectItem | null
+}
+
+export type NewsletterWithSends = Newsletter & {
+  newsletter_sends: NewsletterSendWithSubscriber[]
+}
+
 // ─── Calendar ─────────────────────────────────────────────────────────────────
 export interface CalendarEvent {
   id: string

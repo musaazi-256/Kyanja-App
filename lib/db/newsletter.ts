@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
-import type { Newsletter, NewsletterSubscriber } from '@/types/app'
+import type { Newsletter, NewsletterSubscriber, NewsletterWithSends } from '@/types/app'
 
 export async function getNewsletters(): Promise<Newsletter[]> {
   const supabase = await createClient()
@@ -29,6 +29,34 @@ export async function getSubscribers(activeOnly = true): Promise<NewsletterSubsc
   const { data, error } = await query
   if (error) throw error
   return (data ?? []) as unknown as NewsletterSubscriber[]
+}
+
+export async function getNewsletterWithSends(id: string): Promise<NewsletterWithSends | null> {
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from('newsletters')
+    .select(`
+      *,
+      newsletter_sends (
+        id,
+        status,
+        sent_at,
+        failed_at,
+        error_message,
+        retry_count,
+        provider_msg_id,
+        newsletter_subscribers (
+          id,
+          email,
+          full_name
+        )
+      )
+    `)
+    .eq('id', id)
+    .single()
+
+  if (error || !data) return null
+  return data as unknown as NewsletterWithSends
 }
 
 export async function getSubscriberCount(): Promise<number> {

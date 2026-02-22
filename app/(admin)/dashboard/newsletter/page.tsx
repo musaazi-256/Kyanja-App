@@ -127,7 +127,14 @@ export default async function NewsletterPage({
               ) : (
                 filtered.map((nl) => (
                   <TableRow key={nl.id}>
-                    <TableCell className="font-medium max-w-xs truncate">{nl.subject}</TableCell>
+                    <TableCell className="font-medium max-w-xs truncate">
+                      <Link
+                        href={`/dashboard/newsletter/${nl.id}`}
+                        className="hover:underline hover:text-blue-600 transition-colors"
+                      >
+                        {nl.subject}
+                      </Link>
+                    </TableCell>
                     <TableCell>
                       <Badge className={`${STATUS_COLORS[nl.status]} border-0 capitalize`}>
                         {nl.status}
@@ -142,7 +149,7 @@ export default async function NewsletterPage({
                       {format(new Date(nl.created_at), 'dd MMM yyyy')}
                     </TableCell>
                     <TableCell className="text-right">
-                      <NewsletterRowActions id={nl.id} isDraft={nl.status === 'draft'} />
+                      <NewsletterRowActions id={nl.id} status={nl.status} />
                     </TableCell>
                   </TableRow>
                 ))

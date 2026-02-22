@@ -8,7 +8,6 @@ import { deleteMedia } from '@/actions/media/upload'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Card, CardContent } from '@/components/ui/card'
 import {
   Dialog, DialogContent, DialogDescription, DialogFooter,
   DialogHeader, DialogTitle,
@@ -17,12 +16,16 @@ import { Badge } from '@/components/ui/badge'
 import {
   Upload, Trash2, Loader2, ImageIcon,
   LayoutGrid, LayoutList, Search,
-  ChevronLeft, ChevronRight,
+  ChevronLeft, ChevronRight, MoreHorizontal,
 } from 'lucide-react'
+import {
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import UploadModal from './UploadModal'
 import type { MediaFile, PaginationMeta, MediaContext } from '@/types/app'
 
 const CONTEXTS: { value: MediaContext; label: string }[] = [
+  { value: 'hero',         label: 'Hero' },
   { value: 'gallery',      label: 'Gallery' },
   { value: 'admissions',   label: 'Admissions' },
   { value: 'news',         label: 'News' },
@@ -49,14 +52,19 @@ interface Props {
 }
 
 export default function MediaLibrary({ initialFiles, meta }: Props) {
-  const [files]                = useState<MediaFile[]>(initialFiles)
+  const router       = useRouter()
+  const searchParams = useSearchParams()
+
+  // Use initialFiles directly — useState would freeze the list after the first
+  // render and ignore updated props passed in after router.refresh().
+  const files = initialFiles
+
   const [view, setView]        = useState<'grid' | 'list'>('grid')
   const [deleting, startDelete] = useTransition()
   const [toDelete, setToDelete] = useState<MediaFile | null>(null)
   const [uploadOpen, setUploadOpen] = useState(false)
-  const [searchDraft, setSearchDraft] = useState('')
-  const router       = useRouter()
-  const searchParams = useSearchParams()
+  // Initialise from the URL so the input reflects an active search filter on load.
+  const [searchDraft, setSearchDraft] = useState(searchParams.get('search') ?? '')
 
   function updateParams(updates: Record<string, string | undefined>) {
     const params = new URLSearchParams(searchParams.toString())
@@ -119,18 +127,18 @@ export default function MediaLibrary({ initialFiles, meta }: Props) {
             />
           </form>
 
-          {/* Context filter */}
+          {/* Category filter */}
           <Select
             value={activeContext ?? 'all'}
             onValueChange={(v) =>
               updateParams({ context: v === 'all' ? undefined : v, page: undefined })
             }
           >
-            <SelectTrigger className="w-36">
-              <SelectValue placeholder="All contexts" />
+            <SelectTrigger className="w-40">
+              <SelectValue placeholder="All categories" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All contexts</SelectItem>
+              <SelectItem value="all">All categories</SelectItem>
               {CONTEXTS.map((c) => (
                 <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>
               ))}
@@ -228,10 +236,10 @@ export default function MediaLibrary({ initialFiles, meta }: Props) {
                 </Button>
               </div>
 
-              {/* Context badge */}
+              {/* Category badge */}
               {file.context && (
-                <Badge className="absolute top-1.5 left-1.5 text-[10px] px-1.5 py-0 bg-black/50 text-white border-0 capitalize pointer-events-none">
-                  {file.context.replace('_', ' ')}
+                <Badge className="absolute top-1.5 left-1.5 text-[10px] px-1.5 py-0 bg-black/50 text-white border-0 pointer-events-none">
+                  {CONTEXTS.find(c => c.value === file.context)?.label ?? file.context}
                 </Badge>
               )}
             </div>
@@ -246,7 +254,7 @@ export default function MediaLibrary({ initialFiles, meta }: Props) {
               <tr>
                 <th className="text-left px-4 py-3 font-medium text-slate-600 w-14">Preview</th>
                 <th className="text-left px-4 py-3 font-medium text-slate-600">File</th>
-                <th className="text-left px-4 py-3 font-medium text-slate-600 hidden sm:table-cell w-32">Context</th>
+                <th className="text-left px-4 py-3 font-medium text-slate-600 hidden sm:table-cell w-32">Category</th>
                 <th className="text-left px-4 py-3 font-medium text-slate-600 hidden md:table-cell w-24">Size</th>
                 <th className="text-left px-4 py-3 font-medium text-slate-600 hidden lg:table-cell w-36">Uploaded</th>
                 <th className="w-12" />
@@ -284,11 +292,11 @@ export default function MediaLibrary({ initialFiles, meta }: Props) {
                     )}
                   </td>
 
-                  {/* Context */}
+                  {/* Category */}
                   <td className="px-4 py-2.5 hidden sm:table-cell">
                     {file.context && (
-                      <Badge variant="secondary" className="capitalize text-xs font-normal">
-                        {file.context.replace('_', ' ')}
+                      <Badge variant="secondary" className="text-xs font-normal">
+                        {CONTEXTS.find(c => c.value === file.context)?.label ?? file.context}
                       </Badge>
                     )}
                   </td>
@@ -303,16 +311,25 @@ export default function MediaLibrary({ initialFiles, meta }: Props) {
                     {formatDate(file.created_at)}
                   </td>
 
-                  {/* Delete */}
+                  {/* Actions */}
                   <td className="px-3 py-2.5 text-right">
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      className="w-8 h-8 text-red-500 hover:text-red-700 hover:bg-red-50"
-                      onClick={() => setToDelete(file)}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-8 w-8">
+                          <MoreHorizontal className="w-4 h-4" />
+                          <span className="sr-only">File actions</span>
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem
+                          onSelect={() => setToDelete(file)}
+                          className="text-red-600 focus:text-red-600 focus:bg-red-50"
+                        >
+                          <Trash2 className="w-4 h-4 mr-2" />
+                          Delete
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </td>
                 </tr>
               ))}

@@ -220,7 +220,7 @@ export default function UploadModal({ open, onClose, onUploaded }: Props) {
           {uploadType === 'general' && (
             <div className="space-y-4">
               <div className="space-y-1.5">
-                <Label>Context</Label>
+                <Label>Category</Label>
                 <Select value={context} onValueChange={(v) => setContext(v as MediaContext)}>
                   <SelectTrigger>
                     <SelectValue />
@@ -292,7 +292,7 @@ export default function UploadModal({ open, onClose, onUploaded }: Props) {
                     Desktop Image
                   </Label>
                   <p className="text-xs text-slate-400 -mt-1">
-                    Recommended: landscape, 1920 × 1080 px or larger
+                    1920 × 1440 px (4:3) · Landscape · Centre your subject
                   </p>
                   <DropZone
                     file={desktopFile}
@@ -312,7 +312,7 @@ export default function UploadModal({ open, onClose, onUploaded }: Props) {
                     Mobile Image
                   </Label>
                   <p className="text-xs text-slate-400 -mt-1">
-                    Recommended: portrait, 768 × 1200 px or larger
+                    1080 × 1350 px (4:5) · Portrait · Keep subject upper-centre
                   </p>
                   <DropZone
                     file={mobileFile}

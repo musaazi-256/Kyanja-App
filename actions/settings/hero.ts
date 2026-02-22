@@ -19,7 +19,7 @@ async function validateAndUpload(
   admin: ReturnType<typeof createAdminClient>,
   file: File,
   variant: 'desktop' | 'mobile',
-): Promise<string> {
+): Promise<{ publicUrl: string; storagePath: string }> {
   if (!ALLOWED_TYPES.includes(file.type)) {
     throw new ValidationError('Only JPEG, PNG and WEBP images are accepted')
   }
@@ -39,7 +39,7 @@ async function validateAndUpload(
   if (uploadError) throw new AppError(uploadError.message, 'UPLOAD_ERROR', 400)
 
   const { data: { publicUrl } } = admin.storage.from(BUCKET).getPublicUrl(storagePath)
-  return publicUrl
+  return { publicUrl, storagePath }
 }
 
 /**
@@ -50,7 +50,7 @@ export async function uploadHeroImages(
   formData: FormData,
 ): Promise<ActionResult<{ desktopUrl?: string; mobileUrl?: string }>> {
   try {
-    await requirePermission('content:write')
+    const profile = await requirePermission('content:write')
 
     const desktopFile = formData.get('desktop_image') as File | null
     const mobileFile  = formData.get('mobile_image')  as File | null
@@ -64,23 +64,70 @@ export async function uploadHeroImages(
 
     const admin = createAdminClient()
     const result: { desktopUrl?: string; mobileUrl?: string } = {}
-    const upserts: { key: string; value: string; updated_at: string }[] = []
+    const settingsUpserts: { key: string; value: string; updated_at: string }[] = []
+    const mediaUpserts: {
+      bucket: string; storage_path: string; public_url: string
+      file_name: string; file_size: number; mime_type: string
+      context: 'hero'; alt_text: string; uploaded_by: string
+    }[] = []
     const now = new Date().toISOString()
 
     if (hasDesktop) {
-      result.desktopUrl = await validateAndUpload(admin, desktopFile!, 'desktop')
-      upserts.push({ key: 'hero_image_url_desktop', value: result.desktopUrl, updated_at: now })
+      const { publicUrl, storagePath } = await validateAndUpload(admin, desktopFile!, 'desktop')
+      // Cache-bust URL is stored in site_settings so every upload forces a fresh fetch.
+      // The base URL (no ?t=) is stored in media_files for clean display in the library.
+      const cacheBustedUrl = `${publicUrl}?t=${Date.now()}`
+      result.desktopUrl = cacheBustedUrl
+      settingsUpserts.push({ key: 'hero_image_url_desktop', value: cacheBustedUrl, updated_at: now })
+      mediaUpserts.push({
+        bucket:       BUCKET,
+        storage_path: storagePath,
+        public_url:   publicUrl,
+        file_name:    'Hero – Desktop',
+        file_size:    desktopFile!.size,
+        mime_type:    desktopFile!.type,
+        context:      'hero',
+        alt_text:     'Homepage hero desktop image',
+        uploaded_by:  profile.id,
+      })
     }
+
     if (hasMobile) {
-      result.mobileUrl = await validateAndUpload(admin, mobileFile!, 'mobile')
-      upserts.push({ key: 'hero_image_url_mobile', value: result.mobileUrl, updated_at: now })
+      const { publicUrl, storagePath } = await validateAndUpload(admin, mobileFile!, 'mobile')
+      const cacheBustedUrl = `${publicUrl}?t=${Date.now()}`
+      result.mobileUrl = cacheBustedUrl
+      settingsUpserts.push({ key: 'hero_image_url_mobile', value: cacheBustedUrl, updated_at: now })
+      mediaUpserts.push({
+        bucket:       BUCKET,
+        storage_path: storagePath,
+        public_url:   publicUrl,
+        file_name:    'Hero – Mobile',
+        file_size:    mobileFile!.size,
+        mime_type:    mobileFile!.type,
+        context:      'hero',
+        alt_text:     'Homepage hero mobile image',
+        uploaded_by:  profile.id,
+      })
     }
 
     const { error: settingsError } = await admin
       .from('site_settings')
-      .upsert(upserts, { onConflict: 'key' })
+      .upsert(settingsUpserts, { onConflict: 'key' })
 
     if (settingsError) throw new AppError(settingsError.message, 'DB_ERROR', 400)
+
+    // Track hero images in media_files so they appear in the Media Library.
+    // storage_path is the conflict key — re-uploading updates the existing record.
+    if (mediaUpserts.length > 0) {
+      const { error: mediaError } = await admin
+        .from('media_files')
+        .upsert(mediaUpserts, { onConflict: 'storage_path' })
+
+      if (mediaError) {
+        // Non-fatal — the image is live even if the library record fails.
+        console.error('[hero] media_files upsert failed', mediaError)
+      }
+    }
 
     revalidatePath('/')
     revalidatePath('/dashboard/media')

@@ -485,7 +485,7 @@ export type Database = {
         | 'withdrawn'
       user_role: 'admin' | 'staff' | 'teacher' | 'parent' | 'student'
       send_status: 'draft' | 'queued' | 'sending' | 'sent' | 'failed'
-      media_context: 'gallery' | 'admissions' | 'news' | 'page_content' | 'profile'
+      media_context: 'gallery' | 'admissions' | 'news' | 'page_content' | 'profile' | 'hero'
     }
     CompositeTypes: {
       [_ in never]: never

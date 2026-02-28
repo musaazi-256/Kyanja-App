@@ -211,7 +211,7 @@ export default function ApplicationForm({ action, submitLabel = 'Submit Applicat
         </CardContent>
       </Card>
 
-      <Button type="submit" disabled={pending} className="w-full sm:w-auto bg-[#1e3a5f] hover:bg-[#16305a]">
+      <Button type="submit" disabled={pending} className="w-full sm:w-auto bg-blue-900 hover:bg-blue-800 active:scale-95 transition-all">
         {pending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
         {submitLabel}
       </Button>

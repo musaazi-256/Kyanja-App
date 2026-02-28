@@ -70,7 +70,7 @@ export default async function NewsletterPage({
               Subscribers
             </Link>
           </Button>
-          <Button asChild size="sm" className="bg-[#1e3a5f] hover:bg-[#16305a]">
+          <Button asChild size="sm" className="bg-blue-900 hover:bg-blue-800 active:scale-95 transition-all">
             <Link href="/dashboard/newsletter/compose">
               <Plus className="w-4 h-4 mr-2" />
               Compose

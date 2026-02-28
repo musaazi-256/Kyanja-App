@@ -74,7 +74,7 @@ export default function DownloadsManager({ initialDownloads }: Props) {
         <p className="text-sm text-slate-500">{downloads.length} file{downloads.length !== 1 ? 's' : ''}</p>
         <Button
           onClick={() => setUploadOpen(true)}
-          className="bg-[#1e3a5f] hover:bg-[#16305a] gap-2"
+          className="bg-blue-900 hover:bg-blue-800 active:scale-95 transition-all gap-2"
         >
           <Upload className="w-4 h-4" />
           Upload File

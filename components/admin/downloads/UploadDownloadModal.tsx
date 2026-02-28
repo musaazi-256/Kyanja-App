@@ -151,7 +151,7 @@ export default function UploadDownloadModal({ open, onClose, onUploaded }: Props
                         : 'border-slate-200 text-slate-500 hover:border-slate-300',
                     ].join(' ')}
                   >
-                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${selected ? 'bg-[#1e3a5f] text-white' : color}`}>
+                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${selected ? 'bg-blue-900 text-white' : color}`}>
                       {selected
                         ? <Check className="w-4 h-4" />
                         : <Icon className="w-4 h-4" />
@@ -168,7 +168,7 @@ export default function UploadDownloadModal({ open, onClose, onUploaded }: Props
         <DialogFooter className="pt-2">
           <Button variant="outline" onClick={handleClose} disabled={pending}>Cancel</Button>
           <Button
-            className="bg-[#1e3a5f] hover:bg-[#16305a]"
+            className="bg-blue-900 hover:bg-blue-800 active:scale-95 transition-all"
             onClick={handleSubmit}
             disabled={pending || !canSubmit}
           >

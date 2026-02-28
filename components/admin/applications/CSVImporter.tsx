@@ -132,7 +132,7 @@ export default function CSVImporter() {
 
           {file && !result && (
             <div className="flex gap-2">
-              <Button onClick={handleImport} disabled={pending} className="bg-[#1e3a5f] hover:bg-[#16305a]">
+              <Button onClick={handleImport} disabled={pending} className="bg-blue-900 hover:bg-blue-800 active:scale-95 transition-all">
                 {pending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Upload className="w-4 h-4 mr-2" />}
                 {pending ? 'Importing…' : 'Import Applications'}
               </Button>

@@ -34,7 +34,7 @@ export default async function DashboardPage() {
           <Button asChild variant="outline" size="sm">
             <Link href="/dashboard/applications/import">Import CSV</Link>
           </Button>
-          <Button asChild size="sm" className="bg-[#1e3a5f] hover:bg-[#16305a]">
+          <Button asChild size="sm" className="bg-blue-900 hover:bg-blue-800 active:scale-95 transition-all">
             <Link href="/dashboard/applications/new">New Application</Link>
           </Button>
         </div>
@@ -44,7 +44,7 @@ export default async function DashboardPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {cards.map(({ label, value, icon: Icon, color, bg, href }) => (
           <Link key={label} href={href}>
-            <Card className="hover:shadow-md transition-shadow cursor-pointer">
+            <Card className="hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 cursor-pointer">
               <CardContent className="flex items-center gap-4 pt-6">
                 <div className={`${bg} p-3 rounded-xl`}>
                   <Icon className={`w-6 h-6 ${color}`} />

@@ -16,7 +16,7 @@ export default async function SetPasswordPage() {
     <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-[#1e3a5f] rounded-2xl flex items-center justify-center mx-auto mb-4">
+          <div className="w-16 h-16 bg-blue-900 rounded-2xl flex items-center justify-center mx-auto mb-4">
             <span className="text-white text-2xl font-bold">KJ</span>
           </div>
           <h1 className="text-2xl font-bold text-slate-900">Kyanja Junior School</h1>

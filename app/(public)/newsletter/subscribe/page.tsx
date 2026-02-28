@@ -37,7 +37,7 @@ export default function SubscribePage() {
   return (
     <div className="min-h-[60vh] flex items-center justify-center px-4 py-16">
       <div className="w-full max-w-md text-center">
-        <div className="w-16 h-16 bg-[#1e3a5f]/10 rounded-full flex items-center justify-center mx-auto mb-6">
+        <div className="w-16 h-16 bg-blue-900/10 rounded-full flex items-center justify-center mx-auto mb-6">
           <Mail className="w-8 h-8 text-[#1e3a5f]" />
         </div>
         <h1 className="text-3xl font-bold text-slate-900 mb-2">Stay Connected</h1>
@@ -57,7 +57,7 @@ export default function SubscribePage() {
                 <Input id="email" type="email" placeholder="jane@example.com" {...register('email')} />
                 {errors.email && <p className="text-xs text-red-500">{errors.email.message}</p>}
               </div>
-              <Button type="submit" disabled={pending} className="w-full bg-[#1e3a5f] hover:bg-[#16305a]">
+              <Button type="submit" disabled={pending} className="w-full bg-blue-900 hover:bg-blue-800 active:scale-95 transition-all">
                 {pending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
                 Subscribe to Newsletter
               </Button>

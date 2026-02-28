@@ -33,7 +33,7 @@ export default function Sidebar({ role, onClose }: Props) {
   )
 
   return (
-    <div className="flex flex-col h-full bg-[#1e3a5f] text-white w-64">
+    <div className="flex flex-col h-full bg-blue-900 text-white w-64">
       {/* Logo */}
       <div className="flex items-center gap-3 px-6 py-5 border-b border-white/10">
         <div className="w-9 h-9 bg-white/10 rounded-lg flex items-center justify-center shrink-0">

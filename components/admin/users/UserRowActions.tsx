@@ -199,7 +199,7 @@ export default function UserRowActions({ id, role, isActive, isSelf }: Props) {
           <DialogFooter>
             <Button variant="outline" onClick={close} disabled={pending}>Cancel</Button>
             <Button
-              className="bg-[#1e3a5f] hover:bg-[#16305a]"
+              className="bg-blue-900 hover:bg-blue-800 active:scale-95 transition-all"
               onClick={handleRoleSave}
               disabled={pending || selectedRole === role}
             >
@@ -230,7 +230,7 @@ export default function UserRowActions({ id, role, isActive, isSelf }: Props) {
           <DialogFooter>
             <Button variant="outline" onClick={close} disabled={pending}>Cancel</Button>
             <Button
-              className="bg-[#1e3a5f] hover:bg-[#16305a]"
+              className="bg-blue-900 hover:bg-blue-800 active:scale-95 transition-all"
               onClick={handleSetPassword}
               disabled={pending || newPassword.length < 8}
             >

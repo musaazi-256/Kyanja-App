@@ -5,6 +5,7 @@ import { Download, ChevronDown, ChevronUp, FileText, Calendar, FileDown } from "
 import { Button } from "@/components/ui/button";
 import { getDownloadIcon, formatFileSize } from "@/lib/downloads/icons";
 import type { Download as DownloadItem } from "@/types/app";
+import AnimateOnScroll from "@/components/public/AnimateOnScroll";
 
 // ── Static fallback shown when no DB downloads are published ──────────────────
 const FALLBACK_DOCUMENTS = [
@@ -117,57 +118,58 @@ export default function DownloadsSection({ downloads: dbDownloads }: Props) {
   return (
     <section className="py-24 px-4 bg-slate-100 relative">
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-16">
-          <span className="text-blue-600 font-semibold tracking-wider uppercase text-sm mb-2 block">
-            Resources
-          </span>
-          <h2 className="text-4xl font-bold text-slate-900 mb-6 tracking-tight">
-            Download Center
-          </h2>
-          <div className="w-24 h-1 bg-blue-500 mx-auto rounded-full mb-6" />
-          <p className="text-slate-600 text-lg max-w-2xl mx-auto leading-relaxed">
-            Easily access essential documents, forms, and updates. Download everything you need
-            to stay connected with your child&apos;s educational journey.
-          </p>
-        </div>
+        <AnimateOnScroll>
+          <div className="text-center mb-16">
+            <span className="text-blue-600 font-semibold tracking-wider uppercase text-sm mb-2 block">
+              Resources
+            </span>
+            <h2 className="text-4xl font-bold text-slate-900 mb-6 tracking-tight">
+              Download Center
+            </h2>
+            <div className="w-24 h-1 bg-blue-500 mx-auto rounded-full mb-6" />
+            <p className="text-slate-600 text-lg max-w-2xl mx-auto leading-relaxed">
+              Easily access essential documents, forms, and updates. Download everything you need
+              to stay connected with your child&apos;s educational journey.
+            </p>
+          </div>
+        </AnimateOnScroll>
 
         <div className="max-w-4xl mx-auto flex flex-col gap-4">
-          {visibleDocuments.map(({ id, title, description, Icon, size, date, color, fileUrl, fileName }) => (
-            <div
-              key={id}
-              className="bg-white border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4 group relative overflow-hidden"
-            >
-              <div className={`w-12 h-12 shrink-0 rounded-xl flex items-center justify-center shadow-sm ${color}`}>
-                <Icon className="w-6 h-6" />
-              </div>
-
-              <div className="grow min-w-0 pr-4">
-                <div className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-3 mb-1">
-                  <h3 className="text-base font-bold text-slate-900 group-hover:text-blue-600 transition-colors truncate">
-                    {title}
-                  </h3>
-                  <div className="flex items-center gap-2 text-[11px] font-semibold text-slate-400 uppercase tracking-wider shrink-0">
-                    <span>{size}</span>
-                    <span className="w-1 h-1 bg-slate-200 rounded-full" />
-                    <span>{date}</span>
-                  </div>
+          {visibleDocuments.map(({ id, title, description, Icon, size, date, color, fileUrl, fileName }, index) => (
+            <AnimateOnScroll key={id} delay={index * 75}>
+              <div className="bg-white border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4 group relative overflow-hidden">
+                <div className={`w-12 h-12 shrink-0 rounded-xl flex items-center justify-center shadow-sm ${color}`}>
+                  <Icon className="w-6 h-6" />
                 </div>
-                {description && (
-                  <p className="text-slate-500 text-sm leading-relaxed line-clamp-2 sm:line-clamp-1">
-                    {description}
-                  </p>
-                )}
-              </div>
 
-              <Button
-                size="sm"
-                onClick={() => handleDownload(fileUrl, fileName)}
-                className="w-full sm:w-auto mt-2 sm:mt-0 bg-slate-50 hover:bg-blue-600 text-slate-700 hover:text-white border border-slate-200 hover:border-blue-600 rounded-lg transition-all shadow-none hover:shadow-md group/btn shrink-0 flex items-center justify-center"
-              >
-                <Download className="w-4 h-4 mr-2 text-blue-500 group-hover/btn:text-white transition-colors" />
-                <span className="sm:hidden lg:inline">Download</span>
-              </Button>
-            </div>
+                <div className="grow min-w-0 pr-4">
+                  <div className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-3 mb-1">
+                    <h3 className="text-base font-bold text-slate-900 group-hover:text-blue-600 transition-colors truncate">
+                      {title}
+                    </h3>
+                    <div className="flex items-center gap-2 text-[11px] font-semibold text-slate-400 uppercase tracking-wider shrink-0">
+                      <span>{size}</span>
+                      <span className="w-1 h-1 bg-slate-200 rounded-full" />
+                      <span>{date}</span>
+                    </div>
+                  </div>
+                  {description && (
+                    <p className="text-slate-500 text-sm leading-relaxed line-clamp-2 sm:line-clamp-1">
+                      {description}
+                    </p>
+                  )}
+                </div>
+
+                <Button
+                  size="sm"
+                  onClick={() => handleDownload(fileUrl, fileName)}
+                  className="w-full sm:w-auto mt-2 sm:mt-0 bg-slate-50 hover:bg-blue-600 text-slate-700 hover:text-white border border-slate-200 hover:border-blue-600 rounded-lg transition-all shadow-none hover:shadow-md group/btn shrink-0 flex items-center justify-center"
+                >
+                  <Download className="w-4 h-4 mr-2 text-blue-500 group-hover/btn:text-white transition-colors" />
+                  <span className="sm:hidden lg:inline">Download</span>
+                </Button>
+              </div>
+            </AnimateOnScroll>
           ))}
         </div>
 

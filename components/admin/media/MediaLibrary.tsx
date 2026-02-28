@@ -100,7 +100,7 @@ export default function MediaLibrary({ initialFiles, meta }: Props) {
         <div className="flex flex-wrap gap-3 items-center">
           {/* Upload button */}
           <Button
-            className="bg-[#1e3a5f] hover:bg-[#16305a] gap-2"
+            className="bg-blue-900 hover:bg-blue-800 active:scale-95 transition-all gap-2"
             onClick={() => setUploadOpen(true)}
           >
             <Upload className="w-4 h-4" />
@@ -164,7 +164,7 @@ export default function MediaLibrary({ initialFiles, meta }: Props) {
             onClick={() => setView('grid')}
             className={`px-3 py-1.5 flex items-center gap-1.5 text-sm transition-colors ${
               view === 'grid'
-                ? 'bg-[#1e3a5f] text-white'
+                ? 'bg-blue-900 text-white'
                 : 'bg-white text-slate-600 hover:bg-slate-50'
             }`}
           >
@@ -175,7 +175,7 @@ export default function MediaLibrary({ initialFiles, meta }: Props) {
             onClick={() => setView('list')}
             className={`px-3 py-1.5 flex items-center gap-1.5 text-sm transition-colors border-l ${
               view === 'list'
-                ? 'bg-[#1e3a5f] text-white'
+                ? 'bg-blue-900 text-white'
                 : 'bg-white text-slate-600 hover:bg-slate-50'
             }`}
           >

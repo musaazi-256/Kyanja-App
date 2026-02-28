@@ -3,6 +3,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { BookOpen, Palette, Dumbbell, Music, Globe, Calculator } from 'lucide-react'
+import AnimateOnScroll from '@/components/public/AnimateOnScroll'
 
 export const metadata: Metadata = {
   title: 'Programs & Academics',
@@ -29,10 +30,13 @@ export default function ProgramsPage() {
       {/* Academic levels */}
       <section className="py-16 px-4">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-3xl font-bold text-slate-900 text-center mb-10">Academic Levels</h2>
+          <AnimateOnScroll>
+            <h2 className="text-3xl font-bold text-slate-900 text-center mb-10">Academic Levels</h2>
+          </AnimateOnScroll>
           <div className="space-y-6">
             {[
               {
+                id:      'early-childhood',
                 name:    'Early Childhood Department',
                 classes: ['Baby Class', 'Middle Class', 'Top Class'],
                 age:     'Ages 3–5',
@@ -42,6 +46,7 @@ export default function ProgramsPage() {
                 textColor: 'text-amber-700'
               },
               {
+                id:      'lower-primary',
                 name:    'Lower Primary',
                 classes: ['Primary 1 (P1)', 'Primary 2 (P2)', 'Primary 3 (P3)', 'Primary 4 (P4)'],
                 age:     'Ages 6–9',
@@ -51,6 +56,7 @@ export default function ProgramsPage() {
                 textColor: 'text-blue-700'
               },
               {
+                id:      'upper-primary',
                 name:    'Upper Primary',
                 classes: ['Primary 5 (P5)', 'Primary 6 (P6)', 'Primary 7 (P7)'],
                 age:     'Ages 10–13',
@@ -59,8 +65,9 @@ export default function ProgramsPage() {
                 bg:      'bg-emerald-50',
                 textColor: 'text-emerald-700'
               },
-            ].map(({ name, classes, age, desc, color, bg, textColor }) => (
-              <div key={name} className="relative group bg-white rounded-[2rem] p-8 md:p-10 border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-300 hover:-translate-y-1 overflow-hidden">
+            ].map(({ id, name, classes, age, desc, color, bg, textColor }, index) => (
+              <AnimateOnScroll key={name} delay={index * 100}>
+              <div id={id} className="relative group bg-white rounded-[2rem] p-8 md:p-10 border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-300 hover:-translate-y-1 overflow-hidden">
                 <div className={`absolute top-0 left-0 w-2 h-full ${bg} ${color} border-l-4 group-hover:w-full group-hover:opacity-10 transition-all duration-500`}></div>
                 
                 <div className="relative z-10 flex flex-col md:flex-row md:items-start justify-between gap-6 mb-6">
@@ -82,6 +89,7 @@ export default function ProgramsPage() {
                 
                 <p className="relative z-10 text-slate-600 leading-relaxed text-[15px]">{desc}</p>
               </div>
+              </AnimateOnScroll>
             ))}
           </div>
         </div>
@@ -91,14 +99,16 @@ export default function ProgramsPage() {
       <section className="py-24 px-4 bg-slate-50 relative overflow-hidden">
         <div className="absolute top-0 left-0 w-1/3 h-full bg-linear-to-b from-blue-50/50 to-transparent skew-x-12 transform origin-top"></div>
         <div className="max-w-6xl mx-auto relative z-10">
-          <div className="text-center mb-16">
-            <span className="text-blue-600 font-semibold tracking-wider uppercase text-sm mb-2 block">
-              Beyond The Core
-            </span>
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6 tracking-tight">Subjects & Activities</h2>
-            <div className="w-20 h-1 bg-blue-500 mx-auto rounded-full"></div>
-          </div>
-          
+          <AnimateOnScroll>
+            <div className="text-center mb-16">
+              <span className="text-blue-600 font-semibold tracking-wider uppercase text-sm mb-2 block">
+                Beyond The Core
+              </span>
+              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6 tracking-tight">Subjects & Activities</h2>
+              <div className="w-20 h-1 bg-blue-500 mx-auto rounded-full"></div>
+            </div>
+          </AnimateOnScroll>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
             {[
               { icon: BookOpen,   title: 'English & Literacy',   desc: 'Reading, writing, comprehension, and oral expression.' },
@@ -107,16 +117,18 @@ export default function ProgramsPage() {
               { icon: Palette,    title: 'Art & Craft',           desc: 'Creative expression through drawing, painting, and crafts.' },
               { icon: Music,      title: 'Music & Drama',         desc: 'Performance arts that build confidence and creativity.' },
               { icon: Dumbbell,   title: 'Physical Education',    desc: 'Sports, games, and physical fitness activities.' },
-            ].map(({ icon: Icon, title, desc }) => (
-              <Card key={title} className="border-0 shadow-sm bg-white hover:shadow-md transition-shadow duration-300 rounded-[1.5rem] overflow-hidden group">
-                <CardContent className="p-8">
-                  <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                    <Icon className="w-7 h-7 text-blue-600" />
-                  </div>
-                  <h3 className="text-[1.15rem] font-bold text-slate-900 mb-2">{title}</h3>
-                  <p className="text-slate-500 text-[15px] leading-relaxed">{desc}</p>
-                </CardContent>
-              </Card>
+            ].map(({ icon: Icon, title, desc }, index) => (
+              <AnimateOnScroll key={title} delay={index * 80} className="h-full">
+                <Card className="border-0 shadow-sm bg-white hover:shadow-md transition-shadow duration-300 rounded-[1.5rem] overflow-hidden group h-full">
+                  <CardContent className="p-8">
+                    <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                      <Icon className="w-7 h-7 text-blue-600" />
+                    </div>
+                    <h3 className="text-[1.15rem] font-bold text-slate-900 mb-2">{title}</h3>
+                    <p className="text-slate-500 text-[15px] leading-relaxed">{desc}</p>
+                  </CardContent>
+                </Card>
+              </AnimateOnScroll>
             ))}
           </div>
         </div>
@@ -124,11 +136,13 @@ export default function ProgramsPage() {
 
       {/* CTA */}
       <section className="py-24 px-4 text-center">
-        <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4 tracking-tight">Enrol Your Child Today</h2>
-        <p className="text-slate-600 text-lg mb-8 max-w-xl mx-auto">Applications are now officially open for the 2025/2026 academic year.</p>
-        <Button asChild size="lg" className="bg-blue-900 hover:bg-blue-800 font-bold rounded-full px-10 h-14 shadow-xl shadow-blue-900/20 active:scale-95 transition-all">
-          <Link href="/admissions/apply">Start Application</Link>
-        </Button>
+        <AnimateOnScroll>
+          <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4 tracking-tight">Enrol Your Child Today</h2>
+          <p className="text-slate-600 text-lg mb-8 max-w-xl mx-auto">Applications are now officially open for the 2025/2026 academic year.</p>
+          <Button asChild size="lg" className="bg-blue-900 hover:bg-blue-800 font-bold rounded-full px-10 h-14 shadow-xl shadow-blue-900/20 active:scale-95 transition-all">
+            <Link href="/admissions/apply">Start Application</Link>
+          </Button>
+        </AnimateOnScroll>
       </section>
     </div>
   )

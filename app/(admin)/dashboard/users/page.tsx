@@ -89,7 +89,7 @@ export default async function UsersPage() {
                       <div className="flex items-center gap-3">
                         <Avatar className="w-8 h-8">
                           <AvatarImage src={profile.avatar_url ?? undefined} />
-                          <AvatarFallback className="text-xs bg-[#1e3a5f] text-white">{initials}</AvatarFallback>
+                          <AvatarFallback className="text-xs bg-blue-900 text-white">{initials}</AvatarFallback>
                         </Avatar>
                         <div>
                           <p className="font-medium text-sm">{profile.full_name}</p>

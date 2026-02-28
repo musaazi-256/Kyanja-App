@@ -5,6 +5,7 @@ import ImageCarousel from "@/components/public/ImageCarousel";
 import ProgramsSection from "@/components/public/programs/ProgramsSection";
 import NewsSection from "@/components/public/news/NewsSection";
 import DownloadsSection from "@/components/public/DownloadsSection";
+import NewsletterSection from "@/components/public/newsletter/NewsletterSection";
 import CtaSection from "@/components/public/cta/CtaSection";
 import { getSetting } from "@/lib/db/settings";
 import { getCarouselImages, getNewsImages } from "@/lib/db/media";
@@ -32,11 +33,12 @@ export default async function HomePage() {
     <div>
       <HeroSection desktopUrl={desktopUrl} mobileUrl={mobileUrl} />
       <StatsBar />
-      <WhyUsSection />
       <ImageCarousel slides={carouselImages} />
+      <WhyUsSection />
       <ProgramsSection />
       <NewsSection images={newsImages} />
       <DownloadsSection downloads={downloads} />
+      <NewsletterSection />
       <CtaSection academicYear={academicYear} />
     </div>
   );

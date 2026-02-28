@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { MediaFile } from "@/types/app";
 
@@ -50,6 +50,73 @@ function mediaFileToSlide(f: MediaFile): Slide {
   };
 }
 
+// ── Atoms ─────────────────────────────────────────────────────────────────────
+
+interface NavButtonProps {
+  onClick: () => void;
+  label: string;
+  children: React.ReactNode;
+  side: "left" | "right";
+}
+
+function NavButton({ onClick, label, children, side }: NavButtonProps) {
+  return (
+    <button
+      onClick={onClick}
+      aria-label={label}
+      className={cn(
+        "absolute top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full",
+        "bg-white/15 backdrop-blur-sm border border-white/25",
+        "flex items-center justify-center text-white",
+        "hover:bg-white/30 transition-all duration-200",
+        side === "left" ? "left-5" : "right-5",
+      )}
+    >
+      {children}
+    </button>
+  );
+}
+
+interface PlayPauseButtonProps {
+  isPaused: boolean;
+  onToggle: () => void;
+}
+
+function PlayPauseButton({ isPaused, onToggle }: PlayPauseButtonProps) {
+  return (
+    <button
+      onClick={onToggle}
+      aria-label={isPaused ? "Play slideshow" : "Pause slideshow"}
+      className="absolute top-4 right-4 z-20 w-9 h-9 rounded-full bg-black/40 backdrop-blur-sm border border-white/20 flex items-center justify-center text-white hover:bg-black/60 transition-all duration-200"
+    >
+      {isPaused ? <Play className="w-4 h-4 ml-0.5" /> : <Pause className="w-4 h-4" />}
+    </button>
+  );
+}
+
+interface DotProps {
+  active: boolean;
+  onClick: () => void;
+  index: number;
+}
+
+function Dot({ active, onClick, index }: DotProps) {
+  return (
+    <button
+      onClick={onClick}
+      aria-label={`Go to slide ${index + 1}`}
+      className={cn(
+        "transition-all duration-300 rounded-full",
+        active
+          ? "w-6 h-2 bg-white"
+          : "w-2 h-2 bg-white/40 hover:bg-white/70",
+      )}
+    />
+  );
+}
+
+// ── Section ───────────────────────────────────────────────────────────────────
+
 interface Props {
   /** DB carousel images from the server component. Falls back to static slides if empty. */
   slides?: MediaFile[];
@@ -63,7 +130,22 @@ export default function ImageCarousel({ slides: dbSlides }: Props) {
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused,     setIsPaused]     = useState(false);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const [isInView,     setIsInView]     = useState(false);
+
+  const sectionRef = useRef<HTMLElement>(null);
+  const timerRef   = useRef<NodeJS.Timeout | null>(null);
+
+  // Detect when the section scrolls into view
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsInView(entry.isIntersecting),
+      { threshold: 0.3 },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   const nextSlide = useCallback(() => {
     setCurrentIndex((prev) => (prev + 1) % slides.length);
@@ -73,22 +155,22 @@ export default function ImageCarousel({ slides: dbSlides }: Props) {
     setCurrentIndex((prev) => (prev - 1 + slides.length) % slides.length);
   }, [slides.length]);
 
+  // Auto-advance only when in view and not paused
   useEffect(() => {
-    if (isPaused) {
-      if (timerRef.current) clearInterval(timerRef.current);
-      return;
+    if (timerRef.current) clearInterval(timerRef.current);
+    if (isInView && !isPaused) {
+      timerRef.current = setInterval(nextSlide, 5000);
     }
-    timerRef.current = setInterval(nextSlide, 5000);
-    return () => { if (timerRef.current) clearInterval(timerRef.current); };
-  }, [nextSlide, isPaused]);
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, [nextSlide, isInView, isPaused]);
 
   // Reset index if slides change (e.g. navigating back to home)
-  useEffect(() => {
-    setCurrentIndex(0);
-  }, [slides.length]);
+  useEffect(() => { setCurrentIndex(0); }, [slides.length]);
 
   return (
-    <section className="py-20 px-4 bg-white">
+    <section ref={sectionRef} className="py-20 px-4 bg-white">
       <div className="max-w-6xl mx-auto mb-12 text-center">
         <span className="text-blue-600 font-semibold tracking-wider uppercase text-sm mb-2 block">
           Life at School
@@ -99,11 +181,7 @@ export default function ImageCarousel({ slides: dbSlides }: Props) {
         <div className="w-24 h-1 bg-blue-500 mx-auto rounded-full mb-6" />
       </div>
 
-      <div
-        className="relative w-full max-w-6xl mx-auto rounded-[2rem] overflow-hidden shadow-2xl group"
-        onMouseEnter={() => setIsPaused(true)}
-        onMouseLeave={() => setIsPaused(false)}
-      >
+      <div className="relative w-full max-w-6xl mx-auto rounded-[2rem] overflow-hidden shadow-2xl">
         {/* Slides */}
         <div
           className="flex transition-transform duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] h-[400px] sm:h-[500px] md:h-[600px]"
@@ -132,39 +210,25 @@ export default function ImageCarousel({ slides: dbSlides }: Props) {
           ))}
         </div>
 
-        {/* Arrows (desktop) */}
-        <button
-          onClick={prevSlide}
-          className="absolute left-6 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-white/10 backdrop-blur-md border border-white/20 max-md:hidden flex items-center justify-center text-white opacity-0 md:group-hover:opacity-100 transition-all duration-300 hover:bg-white/30 hover:scale-105"
-          aria-label="Previous slide"
-        >
-          <ChevronLeft className="w-8 h-8 ml-[-2px]" />
-        </button>
-        <button
-          onClick={nextSlide}
-          className="absolute right-6 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-white/10 backdrop-blur-md border border-white/20 max-md:hidden flex items-center justify-center text-white opacity-0 md:group-hover:opacity-100 transition-all duration-300 hover:bg-white/30 hover:scale-105"
-          aria-label="Next slide"
-        >
-          <ChevronRight className="w-8 h-8 mr-[-2px]" />
-        </button>
+        {/* Controls */}
+        <PlayPauseButton isPaused={isPaused} onToggle={() => setIsPaused((p) => !p)} />
+        <NavButton onClick={prevSlide} label="Previous slide" side="left">
+          <ChevronLeft className="w-6 h-6" />
+        </NavButton>
+        <NavButton onClick={nextSlide} label="Next slide" side="right">
+          <ChevronRight className="w-6 h-6" />
+        </NavButton>
 
-        {/* Number dots */}
-        <div className="absolute bottom-8 left-0 right-0 flex items-center justify-center gap-4 z-20">
+        {/* Pill dots */}
+        <div className="absolute bottom-6 left-0 right-0 flex items-center justify-center gap-2 z-20">
           {slides.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => setCurrentIndex(index)}
-              className={cn(
-                "w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 backdrop-blur-md",
-                currentIndex === index
-                  ? "bg-white text-blue-900 scale-110 shadow-[0_0_15px_rgba(255,255,255,0.5)]"
-                  : "bg-black/40 text-white/80 hover:bg-black/60 hover:text-white border border-white/30 hover:scale-105",
-              )}
-              aria-label={`Go to slide ${index + 1}`}
-            >
-              {index + 1}
-            </button>
+            <Dot key={index} index={index} active={index === currentIndex} onClick={() => setCurrentIndex(index)} />
           ))}
+        </div>
+
+        {/* Slide counter */}
+        <div className="absolute top-4 left-4 z-20 text-xs font-semibold text-white/70 bg-black/30 backdrop-blur-sm px-2.5 py-1 rounded-full">
+          {currentIndex + 1} / {slides.length}
         </div>
       </div>
     </section>

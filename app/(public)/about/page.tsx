@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { CheckCircle } from 'lucide-react'
+import AnimateOnScroll from '@/components/public/AnimateOnScroll'
 
 export const metadata: Metadata = {
   title: 'About Us',
@@ -26,31 +27,35 @@ export default function AboutPage() {
       {/* Mission & Vision */}
       <section className="py-20 px-4 relative">
         <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-8 relative z-10">
-          
-          <div className="bg-white rounded-[2rem] p-8 md:p-10 border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-300 group hover:-translate-y-1">
-            <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-              <CheckCircle className="w-7 h-7 text-blue-600" />
-            </div>
-            <h2 className="text-2xl font-bold text-slate-900 mb-4 tracking-tight group-hover:text-blue-600 transition-colors">Our Mission</h2>
-            <p className="text-slate-600 leading-relaxed text-[15px]">
-              To provide a high quality, nurturing education that develops the whole child —
-              academically, socially, emotionally and spiritually — equipping every learner
-              with the skills and values needed to thrive in an ever-changing world.
-            </p>
-          </div>
 
-          <div className="bg-slate-900 rounded-[2rem] p-8 md:p-10 border border-slate-800 shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:shadow-xl hover:shadow-blue-900/20 transition-all duration-300 group hover:-translate-y-1 relative overflow-hidden">
-            <div className="w-14 h-14 bg-white/10 backdrop-blur-sm rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 relative z-10">
-              <CheckCircle className="w-7 h-7 text-blue-400" />
+          <AnimateOnScroll delay={0} className="h-full">
+            <div className="bg-white rounded-[2rem] p-8 md:p-10 border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-300 group hover:-translate-y-1 h-full">
+              <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                <CheckCircle className="w-7 h-7 text-blue-600" />
+              </div>
+              <h2 className="text-2xl font-bold text-slate-900 mb-4 tracking-tight group-hover:text-blue-600 transition-colors">Our Mission</h2>
+              <p className="text-slate-600 leading-relaxed text-[15px]">
+                To provide a high quality, nurturing education that develops the whole child —
+                academically, socially, emotionally and spiritually — equipping every learner
+                with the skills and values needed to thrive in an ever-changing world.
+              </p>
             </div>
-            <h2 className="text-2xl font-bold text-white mb-4 tracking-tight relative z-10">Our Vision</h2>
-            <p className="text-slate-300 leading-relaxed text-[15px] relative z-10">
-              To be the leading primary school in Uganda, recognized for academic
-              excellence, character development, and producing confident, compassionate,
-              and globally-minded citizens.
-            </p>
-            <div className="absolute -top-32 -right-32 w-64 h-64 bg-blue-500/20 rounded-full blur-[80px]"></div>
-          </div>
+          </AnimateOnScroll>
+
+          <AnimateOnScroll delay={100} className="h-full">
+            <div className="bg-slate-900 rounded-[2rem] p-8 md:p-10 border border-slate-800 shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:shadow-xl hover:shadow-blue-900/20 transition-all duration-300 group hover:-translate-y-1 relative overflow-hidden h-full">
+              <div className="w-14 h-14 bg-white/10 backdrop-blur-sm rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 relative z-10">
+                <CheckCircle className="w-7 h-7 text-blue-400" />
+              </div>
+              <h2 className="text-2xl font-bold text-white mb-4 tracking-tight relative z-10">Our Vision</h2>
+              <p className="text-slate-300 leading-relaxed text-[15px] relative z-10">
+                To be the leading primary school in Uganda, recognized for academic
+                excellence, character development, and producing confident, compassionate,
+                and globally-minded citizens.
+              </p>
+              <div className="absolute -top-32 -right-32 w-64 h-64 bg-blue-500/20 rounded-full blur-[80px]"></div>
+            </div>
+          </AnimateOnScroll>
 
         </div>
       </section>
@@ -60,14 +65,16 @@ export default function AboutPage() {
         <div className="absolute top-0 right-0 w-1/3 h-full bg-linear-to-b from-blue-50/50 to-transparent -skew-x-12 transform origin-top"></div>
         
         <div className="max-w-5xl mx-auto relative z-10">
-          <div className="text-center mb-16">
-            <span className="text-blue-600 font-semibold tracking-wider uppercase text-sm mb-2 block">
-              What Drives Us
-            </span>
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6 tracking-tight">Our Core Values</h2>
-            <div className="w-20 h-1 bg-blue-500 mx-auto rounded-full"></div>
-          </div>
-          
+          <AnimateOnScroll>
+            <div className="text-center mb-16">
+              <span className="text-blue-600 font-semibold tracking-wider uppercase text-sm mb-2 block">
+                What Drives Us
+              </span>
+              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6 tracking-tight">Our Core Values</h2>
+              <div className="w-20 h-1 bg-blue-500 mx-auto rounded-full"></div>
+            </div>
+          </AnimateOnScroll>
+
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
             {[
               'Excellence in all we do',
@@ -78,11 +85,13 @@ export default function AboutPage() {
               'Community and collaboration',
               'Innovation and creativity',
               'Responsibility and discipline',
-            ].map((value) => (
-              <div key={value} className="flex items-start gap-4 bg-white rounded-2xl px-6 py-5 shadow-sm border border-slate-100 hover:shadow-md hover:border-blue-100 hover:-translate-y-1 transition-all duration-300 group">
-                <CheckCircle className="w-5 h-5 text-blue-500 shrink-0 mt-0.5 group-hover:scale-110 transition-transform" />
-                <span className="text-slate-700 font-medium text-[15px] leading-snug group-hover:text-slate-900 transition-colors">{value}</span>
-              </div>
+            ].map((value, index) => (
+              <AnimateOnScroll key={value} delay={index * 60}>
+                <div className="flex items-start gap-4 bg-white rounded-2xl px-6 py-5 shadow-sm border border-slate-100 hover:shadow-md hover:border-blue-100 hover:-translate-y-1 transition-all duration-300 group h-full">
+                  <CheckCircle className="w-5 h-5 text-blue-500 shrink-0 mt-0.5 group-hover:scale-110 transition-transform" />
+                  <span className="text-slate-700 font-medium text-[15px] leading-snug group-hover:text-slate-900 transition-colors">{value}</span>
+                </div>
+              </AnimateOnScroll>
             ))}
           </div>
         </div>
@@ -91,11 +100,13 @@ export default function AboutPage() {
       {/* Location / Google Maps */}
       <section className="py-24 px-4">
         <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6 tracking-tight">Visit Our Campus</h2>
-            <div className="w-20 h-1 bg-blue-500 mx-auto rounded-full mb-6"></div>
-            <p className="text-slate-600">We welcome parents and guardians to tour our facilities.</p>
-          </div>
+          <AnimateOnScroll>
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6 tracking-tight">Visit Our Campus</h2>
+              <div className="w-20 h-1 bg-blue-500 mx-auto rounded-full mb-6"></div>
+              <p className="text-slate-600">We welcome parents and guardians to tour our facilities.</p>
+            </div>
+          </AnimateOnScroll>
           
           <div className="grid md:grid-cols-12 gap-8 items-center bg-white rounded-[2rem] p-4 sm:p-6 border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
             <div className="md:col-span-7 lg:col-span-8 rounded-[1.5rem] overflow-hidden shadow-inner border border-slate-100 h-64 md:h-[400px]">

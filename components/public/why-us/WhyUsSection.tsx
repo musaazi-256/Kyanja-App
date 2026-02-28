@@ -1,6 +1,7 @@
 import { BookOpen, Users, Star, GraduationCap, Heart, Globe } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import type { LucideIcon } from "lucide-react";
+import AnimateOnScroll from "@/components/public/AnimateOnScroll";
 
 // ── Atom ──────────────────────────────────────────────────────────────────────
 
@@ -78,24 +79,28 @@ export default function WhyUsSection() {
       <div className="absolute bottom-0 left-0 -mb-20 -ml-20 w-80 h-80 bg-amber-100 rounded-full blur-3xl opacity-50 pointer-events-none" />
 
       <div className="max-w-6xl mx-auto relative z-10">
-        <div className="text-center mb-16">
-          <span className="text-blue-600 font-semibold tracking-wider uppercase text-sm mb-2 block">
-            Our Core Values
-          </span>
-          <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6 tracking-tight">
-            Why Kyanja Junior School?
-          </h2>
-          <div className="w-24 h-1 bg-blue-500 mx-auto rounded-full mb-6" />
-          <p className="text-slate-600 text-lg max-w-2xl mx-auto leading-relaxed">
-            We believe every child has unique potential. Our nurturing environment
-            is thoughtfully designed to help them discover, explore, and develop
-            their exceptional talents.
-          </p>
-        </div>
+        <AnimateOnScroll>
+          <div className="text-center mb-16">
+            <span className="text-blue-600 font-semibold tracking-wider uppercase text-sm mb-2 block">
+              Our Core Values
+            </span>
+            <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6 tracking-tight">
+              Why Kyanja Junior School?
+            </h2>
+            <div className="w-24 h-1 bg-blue-500 mx-auto rounded-full mb-6" />
+            <p className="text-slate-600 text-lg max-w-2xl mx-auto leading-relaxed">
+              We believe every child has unique potential. Our nurturing environment
+              is thoughtfully designed to help them discover, explore, and develop
+              their exceptional talents.
+            </p>
+          </div>
+        </AnimateOnScroll>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {VALUES.map((value) => (
-            <ValueCard key={value.title} {...value} />
+          {VALUES.map((value, index) => (
+            <AnimateOnScroll key={value.title} delay={index * 100} className="h-full">
+              <ValueCard {...value} />
+            </AnimateOnScroll>
           ))}
         </div>
       </div>

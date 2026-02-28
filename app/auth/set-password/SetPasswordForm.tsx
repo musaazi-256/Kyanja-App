@@ -85,7 +85,7 @@ export default function SetPasswordForm() {
             />
           </div>
 
-          <Button type="submit" className="w-full bg-[#1e3a5f] hover:bg-[#16305a]" disabled={loading}>
+          <Button type="submit" className="w-full bg-blue-900 hover:bg-blue-800 active:scale-95 transition-all" disabled={loading}>
             {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
             Save Password &amp; Continue
           </Button>

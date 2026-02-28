@@ -405,7 +405,7 @@ export default function UploadModal({ open, onClose, onUploaded }: Props) {
             </Button>
           )}
           <Button
-            className="bg-[#1e3a5f] hover:bg-[#16305a]"
+            className="bg-blue-900 hover:bg-blue-800 active:scale-95 transition-all"
             onClick={handlePrimary}
             disabled={pending || !primaryReady}
           >

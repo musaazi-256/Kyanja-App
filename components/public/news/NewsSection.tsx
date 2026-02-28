@@ -178,7 +178,7 @@ export default function NewsSection({ images: dbImages }: Props) {
         </div>
 
         {/* Carousel */}
-        <div className="relative w-full rounded-[2rem] overflow-hidden shadow-2xl aspect-[16/7] sm:aspect-[16/6] md:aspect-[16/5]">
+        <div className="relative w-full rounded-[2rem] overflow-hidden shadow-2xl aspect-video">
 
           {/* Slides */}
           <div
@@ -186,23 +186,23 @@ export default function NewsSection({ images: dbImages }: Props) {
             style={{ transform: `translateX(-${current * 100}%)` }}
           >
             {slides.map((slide, i) => (
-              <div key={slide.id} className="w-full shrink-0 relative h-full">
+              <div key={slide.id} className="w-full shrink-0 relative h-full bg-slate-950">
                 <Image
                   src={slide.src}
                   alt={slide.title}
                   fill
-                  className="object-cover"
+                  className="object-contain"
                   sizes="(max-width: 1200px) 100vw, 1200px"
                   priority={i === 0}
                   unoptimized={slide.src.startsWith("https://images.unsplash")}
                 />
                 {/* Gradient overlay + text */}
-                <div className="absolute inset-0 bg-linear-to-t from-black/75 via-black/20 to-transparent flex flex-col justify-end p-6 md:p-10">
-                  <h3 className="text-white text-2xl md:text-3xl font-bold mb-2 drop-shadow">
+                <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-4 sm:p-6 md:p-10">
+                  <h3 className="text-white text-base sm:text-xl md:text-2xl lg:text-3xl font-bold mb-1 sm:mb-2 drop-shadow leading-tight">
                     {slide.title}
                   </h3>
                   {slide.caption && (
-                    <p className="text-white/80 text-sm md:text-base max-w-2xl">
+                    <p className="text-white/80 text-xs sm:text-sm md:text-base max-w-2xl leading-relaxed">
                       {slide.caption}
                     </p>
                   )}

@@ -12,8 +12,8 @@ export default async function SettingsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
-        <p className="text-sm text-gray-500 mt-1">
+        <h1 className="text-2xl font-bold text-slate-900">Settings</h1>
+        <p className="text-sm text-slate-500 mt-1">
           System configuration and preferences.
         </p>
       </div>
@@ -29,17 +29,17 @@ export default async function SettingsPage() {
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="flex items-center justify-between py-2">
-            <span className="text-sm text-gray-600">Name</span>
+            <span className="text-sm text-slate-600">Name</span>
             <span className="text-sm font-medium">{profile.full_name ?? '—'}</span>
           </div>
           <Separator />
           <div className="flex items-center justify-between py-2">
-            <span className="text-sm text-gray-600">Email</span>
+            <span className="text-sm text-slate-600">Email</span>
             <span className="text-sm font-medium">{profile.email}</span>
           </div>
           <Separator />
           <div className="flex items-center justify-between py-2">
-            <span className="text-sm text-gray-600">Role</span>
+            <span className="text-sm text-slate-600">Role</span>
             <Badge variant="outline" className="capitalize">{profile.role}</Badge>
           </div>
         </CardContent>
@@ -56,19 +56,19 @@ export default async function SettingsPage() {
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="flex items-center justify-between py-2">
-            <span className="text-sm text-gray-600">Supabase URL</span>
-            <span className="text-sm font-mono text-gray-500 truncate max-w-64">
+            <span className="text-sm text-slate-600">Supabase URL</span>
+            <span className="text-sm font-mono text-slate-500 truncate max-w-64">
               {process.env.NEXT_PUBLIC_SUPABASE_URL?.replace('https://', '').split('.')[0]}…
             </span>
           </div>
           <Separator />
           <div className="flex items-center justify-between py-2">
-            <span className="text-sm text-gray-600">Email service</span>
+            <span className="text-sm text-slate-600">Email service</span>
             <Badge variant="secondary">Resend</Badge>
           </div>
           <Separator />
           <div className="flex items-center justify-between py-2">
-            <span className="text-sm text-gray-600">Newsletter delivery</span>
+            <span className="text-sm text-slate-600">Newsletter delivery</span>
             <Badge variant="secondary">Supabase Edge Functions</Badge>
           </div>
         </CardContent>

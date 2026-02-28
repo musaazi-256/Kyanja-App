@@ -91,7 +91,7 @@ export default function AddUserDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size="sm" className="bg-[#1e3a5f] hover:bg-[#16305a]">
+        <Button size="sm" className="bg-blue-900 hover:bg-blue-800 active:scale-95 transition-all">
           <Plus className="w-4 h-4 mr-1.5" />
           Add User
         </Button>
@@ -163,7 +163,7 @@ export default function AddUserDialog() {
                 Cancel
               </Button>
               <Button
-                className="bg-[#1e3a5f] hover:bg-[#16305a]"
+                className="bg-blue-900 hover:bg-blue-800 active:scale-95 transition-all"
                 onClick={handleCreate}
                 disabled={pending || !email || !fullName || !password}
               >
@@ -216,7 +216,7 @@ export default function AddUserDialog() {
                 Cancel
               </Button>
               <Button
-                className="bg-[#1e3a5f] hover:bg-[#16305a]"
+                className="bg-blue-900 hover:bg-blue-800 active:scale-95 transition-all"
                 onClick={handleInvite}
                 disabled={pending || !inviteEmail || !inviteFullName}
               >

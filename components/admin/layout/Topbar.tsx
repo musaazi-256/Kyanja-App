@@ -58,7 +58,7 @@ export default function Topbar({ profile }: Props) {
           <Button variant="ghost" className="flex items-center gap-2 h-9 px-2">
             <Avatar className="w-7 h-7">
               <AvatarImage src={profile?.avatar_url ?? undefined} />
-              <AvatarFallback className="text-xs bg-[#1e3a5f] text-white">
+              <AvatarFallback className="text-xs bg-blue-900 text-white">
                 {initials}
               </AvatarFallback>
             </Avatar>

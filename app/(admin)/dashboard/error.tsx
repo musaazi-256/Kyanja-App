@@ -42,7 +42,7 @@ export default function DashboardError({
         <Button variant="outline" onClick={reset}>
           Try again
         </Button>
-        <Button asChild className="bg-[#1e3a5f] hover:bg-[#16305a]">
+        <Button asChild className="bg-blue-900 hover:bg-blue-800 active:scale-95 transition-all">
           <Link href="/dashboard">Go to Dashboard</Link>
         </Button>
       </div>

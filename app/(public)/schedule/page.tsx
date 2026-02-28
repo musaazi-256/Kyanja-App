@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Calendar, Clock } from 'lucide-react'
 import { fetchCalendarEvents, type CalendarEvent } from '@/lib/calendar/fetch'
 import SchoolCalendar from '@/components/public/SchoolCalendar'
+import AnimateOnScroll from '@/components/public/AnimateOnScroll'
 
 export const metadata: Metadata = {
   title: 'School Schedule',
@@ -53,13 +54,15 @@ export default async function SchedulePage() {
 
           {/* ── Custom School Calendar ───────────────────────────── */}
           <div>
-            <div className="flex flex-col items-center text-center mb-10">
-              <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center mb-4">
-                <Calendar className="w-7 h-7 text-blue-600" />
+            <AnimateOnScroll>
+              <div className="flex flex-col items-center text-center mb-10">
+                <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center mb-4">
+                  <Calendar className="w-7 h-7 text-blue-600" />
+                </div>
+                <h2 className="text-3xl font-bold text-slate-900 tracking-tight">Interactive Calendar</h2>
+                <div className="w-16 h-1 bg-blue-500 rounded-full mt-4"></div>
               </div>
-              <h2 className="text-3xl font-bold text-slate-900 tracking-tight">Interactive Calendar</h2>
-              <div className="w-16 h-1 bg-blue-500 rounded-full mt-4"></div>
-            </div>
+            </AnimateOnScroll>
 
             <div className="max-w-2xl mx-auto">
               <SchoolCalendar
@@ -75,26 +78,30 @@ export default async function SchedulePage() {
 
           {/* ── Term dates ─────────────────────────────────────── */}
           <div className="max-w-4xl mx-auto">
-            <div className="flex flex-col items-center text-center mb-10">
-              <div className="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center mb-4">
-                <Clock className="w-7 h-7 text-emerald-600" />
+            <AnimateOnScroll>
+              <div className="flex flex-col items-center text-center mb-10">
+                <div className="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center mb-4">
+                  <Clock className="w-7 h-7 text-emerald-600" />
+                </div>
+                <h2 className="text-3xl font-bold text-slate-900 tracking-tight">{currentYear} Term Dates</h2>
+                <div className="w-16 h-1 bg-emerald-500 rounded-full mt-4"></div>
               </div>
-              <h2 className="text-3xl font-bold text-slate-900 tracking-tight">{currentYear} Term Dates</h2>
-              <div className="w-16 h-1 bg-emerald-500 rounded-full mt-4"></div>
-            </div>
-            
+            </AnimateOnScroll>
+
             <div className="grid sm:grid-cols-3 gap-6">
               {[
                 { term: 'Term 1', dates: 'To be announced', color: 'blue' },
                 { term: 'Term 2', dates: 'To be announced', color: 'emerald' },
                 { term: 'Term 3', dates: 'To be announced', color: 'amber' },
-              ].map(({ term, dates, color }) => (
-                <div key={term} className="bg-white border border-slate-100 rounded-[2rem] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-lg hover:-translate-y-1 transition-all duration-300 text-center group">
-                  <div className={`inline-flex items-center px-4 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase mb-4 bg-${color}-50 text-${color}-600`}>
-                    {term}
+              ].map(({ term, dates, color }, index) => (
+                <AnimateOnScroll key={term} delay={index * 100}>
+                  <div className="bg-white border border-slate-100 rounded-[2rem] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-lg hover:-translate-y-1 transition-all duration-300 text-center group">
+                    <div className={`inline-flex items-center px-4 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase mb-4 bg-${color}-50 text-${color}-600`}>
+                      {term}
+                    </div>
+                    <p className="text-slate-500 text-[15px] font-medium">{dates}</p>
                   </div>
-                  <p className="text-slate-500 text-[15px] font-medium">{dates}</p>
-                </div>
+                </AnimateOnScroll>
               ))}
             </div>
           </div>
@@ -102,14 +109,16 @@ export default async function SchedulePage() {
           {/* ── Upcoming events (API-powered, when API key is set) ── */}
           {events.length > 0 && (
             <div className="max-w-4xl mx-auto">
-              <div className="flex flex-col items-center text-center mb-10">
-                <h2 className="text-3xl font-bold text-slate-900 tracking-tight">Upcoming Highlights</h2>
-                <div className="w-16 h-1 bg-amber-500 rounded-full mt-4"></div>
-              </div>
+              <AnimateOnScroll>
+                <div className="flex flex-col items-center text-center mb-10">
+                  <h2 className="text-3xl font-bold text-slate-900 tracking-tight">Upcoming Highlights</h2>
+                  <div className="w-16 h-1 bg-amber-500 rounded-full mt-4"></div>
+                </div>
+              </AnimateOnScroll>
               <div className="space-y-4">
-                {events.map((event) => (
+                {events.map((event, index) => (
+                  <AnimateOnScroll key={event.id ?? `${event.summary}-${event.start?.date}`} delay={index * 60}>
                   <div
-                    key={event.id ?? `${event.summary}-${event.start?.date}`}
                     className="bg-white border border-slate-100 rounded-[1.5rem] p-6 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] transition-all duration-300 flex gap-6 group items-center"
                   >
                     <div className="shrink-0 w-2 h-16 rounded-full bg-blue-100 group-hover:bg-blue-500 transition-colors duration-300" />
@@ -126,6 +135,7 @@ export default async function SchedulePage() {
                       )}
                     </div>
                   </div>
+                  </AnimateOnScroll>
                 ))}
               </div>
             </div>

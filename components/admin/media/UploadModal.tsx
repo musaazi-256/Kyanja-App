@@ -275,8 +275,16 @@ export default function UploadModal({ open, onClose, onUploaded }: Props) {
                       file={generalFile}
                       inputRef={generalRef}
                       accept="image/jpeg,image/png,image/webp"
-                      onChange={(e) => setGeneralFile(e.target.files?.[0] ?? null)}
-                      hint="JPEG · PNG · WEBP · Max 5 MB"
+                      onChange={(e) => {
+                        const f = e.target.files?.[0] ?? null
+                        if (f && f.size > 3 * 1024 * 1024) {
+                          toast.error('Image must be under 3 MB')
+                          if (generalRef.current) generalRef.current.value = ''
+                          return
+                        }
+                        setGeneralFile(f)
+                      }}
+                      hint="JPEG · PNG · WEBP · Max 3 MB"
                     />
                   </div>
                 </div>

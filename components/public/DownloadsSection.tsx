@@ -17,6 +17,7 @@ const FALLBACK_DOCUMENTS = [
     date: "Feb 15, 2026",
     color: "text-blue-600 bg-blue-100",
     fileUrl: "#",
+    fileName: "term-1-school-circular",
   },
   {
     id: "timetable",
@@ -27,6 +28,7 @@ const FALLBACK_DOCUMENTS = [
     date: "Jan 10, 2026",
     color: "text-emerald-600 bg-emerald-100",
     fileUrl: "#",
+    fileName: "weekly-school-timetable",
   },
   {
     id: "admissions",
@@ -37,6 +39,7 @@ const FALLBACK_DOCUMENTS = [
     date: "Nov 05, 2025",
     color: "text-amber-600 bg-amber-100",
     fileUrl: "#",
+    fileName: "application-form",
   },
 ];
 
@@ -49,6 +52,7 @@ interface NormalisedDoc {
   date: string;
   color: string;
   fileUrl: string;
+  fileName: string;
 }
 
 function dbToDoc(dl: DownloadItem): NormalisedDoc {
@@ -63,8 +67,33 @@ function dbToDoc(dl: DownloadItem): NormalisedDoc {
     date: new Date(dl.updated_at).toLocaleDateString("en-UG", {
       day: "numeric", month: "short", year: "numeric",
     }),
-    fileUrl: dl.public_url,
+    fileUrl:  dl.public_url,
+    fileName: dl.file_name,
   };
+}
+
+/** Opens the file in a new tab for preview, then auto-downloads it as a file. */
+async function handleDownload(fileUrl: string, fileName: string) {
+  if (!fileUrl || fileUrl === "#") return;
+
+  // Open for in-browser preview
+  window.open(fileUrl, "_blank", "noopener,noreferrer");
+
+  // Fetch as blob so the browser triggers a Save dialog instead of navigating
+  try {
+    const res  = await fetch(fileUrl);
+    const blob = await res.blob();
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement("a");
+    a.href     = url;
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  } catch {
+    // Silent fail — the preview tab is already open
+  }
 }
 
 interface Props {
@@ -103,7 +132,7 @@ export default function DownloadsSection({ downloads: dbDownloads }: Props) {
         </div>
 
         <div className="max-w-4xl mx-auto flex flex-col gap-4">
-          {visibleDocuments.map(({ id, title, description, Icon, size, date, color, fileUrl }) => (
+          {visibleDocuments.map(({ id, title, description, Icon, size, date, color, fileUrl, fileName }) => (
             <div
               key={id}
               className="bg-white border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4 group relative overflow-hidden"
@@ -131,14 +160,12 @@ export default function DownloadsSection({ downloads: dbDownloads }: Props) {
               </div>
 
               <Button
-                asChild
                 size="sm"
-                className="w-full sm:w-auto mt-2 sm:mt-0 bg-slate-50 hover:bg-blue-600 text-slate-700 hover:text-white border border-slate-200 hover:border-blue-600 rounded-lg transition-all shadow-none hover:shadow-md group/btn shrink-0"
+                onClick={() => handleDownload(fileUrl, fileName)}
+                className="w-full sm:w-auto mt-2 sm:mt-0 bg-slate-50 hover:bg-blue-600 text-slate-700 hover:text-white border border-slate-200 hover:border-blue-600 rounded-lg transition-all shadow-none hover:shadow-md group/btn shrink-0 flex items-center justify-center"
               >
-                <a href={fileUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center">
-                  <Download className="w-4 h-4 mr-2 text-blue-500 group-hover/btn:text-white transition-colors" />
-                  <span className="sm:hidden lg:inline">Download</span>
-                </a>
+                <Download className="w-4 h-4 mr-2 text-blue-500 group-hover/btn:text-white transition-colors" />
+                <span className="sm:hidden lg:inline">Download</span>
               </Button>
             </div>
           ))}

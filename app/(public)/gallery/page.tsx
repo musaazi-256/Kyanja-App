@@ -46,9 +46,9 @@ export default async function GalleryPage() {
               <p className="text-slate-500">Check back shortly for beautiful photos from our school events and daily activities.</p>
             </div>
           ) : (
-            <div className={`columns-1 sm:columns-2 md:columns-3 xl:columns-4 gap-6 space-y-6 mx-auto ${centeredWidthClass}`}>
+            <div className={`columns-1 sm:columns-2 md:columns-3 xl:columns-4 gap-1.5 space-y-1.5 mx-auto ${centeredWidthClass}`}>
               {images.map((img) => (
-                <div key={img.id} className="break-inside-avoid rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group bg-white border border-slate-100 relative">
+                <div key={img.id} className="break-inside-avoid rounded-xl overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group bg-white border border-slate-100 relative">
                   <img
                     src={`${img.public_url}?width=1200`}
                     alt={img.alt_text ?? img.file_name}

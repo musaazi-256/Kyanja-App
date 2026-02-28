@@ -30,6 +30,15 @@ export async function getAllDownloads(): Promise<Download[]> {
     .is('deleted_at', null)
     .order('sort_order', { ascending: true })
     .order('created_at', { ascending: false })
-  if (error) throw error
+  if (error) {
+    // Table may not exist yet (migration 010 pending) — surface a clear message.
+    const msg = (error as { message?: string }).message ?? ''
+    if (msg.includes('relation') && msg.includes('does not exist')) {
+      throw new Error(
+        'The downloads table does not exist. Please run migration 010 in the Supabase SQL Editor.',
+      )
+    }
+    throw error
+  }
   return (data ?? []) as Download[]
 }

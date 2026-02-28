@@ -4,7 +4,7 @@ import { useRef, useState, useTransition } from 'react'
 import { toast } from 'sonner'
 import {
   Upload, Loader2, ImageIcon, Monitor, Smartphone, Layers,
-  GalleryHorizontal, ChevronLeft,
+  GalleryHorizontal, ChevronLeft, Newspaper,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -28,7 +28,7 @@ type MediaContext = BaseMediaContext | 'carousel'
 
 type UploadType  = 'general' | 'hero'
 type HeroVariant = 'desktop' | 'mobile' | 'both'
-// Carousel uploads have a mandatory 2-step flow: 'form' → file/category, 'copy' → headline+desc
+// Carousel and News uploads have a mandatory 2-step flow: 'form' → file/category, 'copy' → headline+desc
 type Step = 'form' | 'copy'
 
 const CONTEXTS: { value: MediaContext; label: string }[] = [
@@ -46,6 +46,20 @@ const HERO_VARIANTS: { value: HeroVariant; label: string; icon: React.ComponentT
   { value: 'both',    label: 'Both',    icon: Layers     },
 ]
 
+// Size specifications shown per context
+const CONTEXT_SPECS: Partial<Record<MediaContext, { size: string; ratio: string; tip: string }>> = {
+  carousel: {
+    size:  '1920 × 1080 px',
+    ratio: '16:9',
+    tip:   'Landscape · Centre your subject · Avoid text near the edges',
+  },
+  news: {
+    size:  '1920 × 1080 px',
+    ratio: '16:9',
+    tip:   'Landscape · Keep key content centred · Text overlay will be added on the next step',
+  },
+}
+
 // ── File drop zone ─────────────────────────────────────────────────────────────
 interface DropZoneProps {
   file: File | null
@@ -62,7 +76,7 @@ function DropZone({ file, inputRef, accept, onChange, hint }: DropZoneProps) {
       <button
         type="button"
         onClick={() => inputRef.current?.click()}
-        className="w-full rounded-xl border-2 border-dashed border-slate-200 bg-slate-50 py-7 text-center hover:border-[#1e3a5f]/40 hover:bg-blue-50/30 transition-colors"
+        className="w-full rounded-xl border-2 border-dashed border-slate-200 bg-slate-50 py-7 text-center hover:border-blue-900/40 hover:bg-blue-50/30 transition-colors"
       >
         {file ? (
           <div className="text-sm">
@@ -70,7 +84,7 @@ function DropZone({ file, inputRef, accept, onChange, hint }: DropZoneProps) {
             <p className="text-slate-400 mt-0.5 text-xs">
               {(file.size / 1024 / 1024).toFixed(2)} MB · {file.type.split('/')[1].toUpperCase()}
             </p>
-            <p className="text-[#1e3a5f] text-xs mt-1.5 underline underline-offset-2">Click to replace</p>
+            <p className="text-blue-900 text-xs mt-1.5 underline underline-offset-2">Click to replace</p>
           </div>
         ) : (
           <div className="text-slate-400">
@@ -103,9 +117,9 @@ export default function UploadModal({ open, onClose, onUploaded }: Props) {
   const [generalFile, setGeneralFile] = useState<File | null>(null)
   const generalRef = useRef<HTMLInputElement>(null)
 
-  // Carousel copy fields (step 2 — both required)
-  const [carouselTitle, setCarouselTitle] = useState('')
-  const [carouselDesc,  setCarouselDesc]  = useState('')
+  // Slide copy fields — used for both carousel and news (step 2, both required)
+  const [slideTitle, setSlideTitle] = useState('')
+  const [slideDesc,  setSlideDesc]  = useState('')
 
   // Hero state
   const [heroVariant, setHeroVariant] = useState<HeroVariant>('desktop')
@@ -120,8 +134,8 @@ export default function UploadModal({ open, onClose, onUploaded }: Props) {
     setContext('carousel')
     setAltText('')
     setGeneralFile(null)
-    setCarouselTitle('')
-    setCarouselDesc('')
+    setSlideTitle('')
+    setSlideDesc('')
     setHeroVariant('desktop')
     setDesktopFile(null)
     setMobileFile(null)
@@ -136,7 +150,8 @@ export default function UploadModal({ open, onClose, onUploaded }: Props) {
     onClose()
   }
 
-  const isCarousel = uploadType === 'general' && context === 'carousel'
+  // Carousel and News both get the mandatory 2-step copy flow
+  const isSlideContext = uploadType === 'general' && (context === 'carousel' || context === 'news')
 
   const formReady = uploadType === 'general'
     ? !!generalFile
@@ -144,11 +159,11 @@ export default function UploadModal({ open, onClose, onUploaded }: Props) {
     : heroVariant === 'mobile'  ? !!mobileFile
     : !!(desktopFile || mobileFile)
 
-  const copyReady = carouselTitle.trim().length > 0 && carouselDesc.trim().length > 0
+  const copyReady = slideTitle.trim().length > 0 && slideDesc.trim().length > 0
 
   function handlePrimary() {
-    // For carousel uploads, the first click goes to the copy step
-    if (step === 'form' && isCarousel) {
+    // For carousel / news uploads, the first click goes to the copy step
+    if (step === 'form' && isSlideContext) {
       setStep('copy')
       return
     }
@@ -159,9 +174,9 @@ export default function UploadModal({ open, onClose, onUploaded }: Props) {
         const fd = new FormData()
         fd.set('file',     generalFile)
         fd.set('context',  context)
-        // Carousel: use the copy-step fields; other contexts: use the optional alt-text field
-        fd.set('alt_text', isCarousel ? carouselTitle : altText)
-        if (isCarousel) fd.set('caption', carouselDesc)
+        // Carousel / news: use the copy-step fields; other contexts: use the optional alt-text field
+        fd.set('alt_text', isSlideContext ? slideTitle : altText)
+        if (isSlideContext) fd.set('caption', slideDesc)
 
         const res = await uploadMedia(fd)
         if (res.success) {
@@ -188,21 +203,26 @@ export default function UploadModal({ open, onClose, onUploaded }: Props) {
     })
   }
 
-  const primaryLabel = step === 'form' && isCarousel ? 'Next: Add Copy' : 'Upload'
+  const primaryLabel = step === 'form' && isSlideContext ? 'Next: Add Copy' : 'Upload'
   const primaryReady = step === 'copy' ? copyReady : formReady
   const showDesktop  = uploadType === 'hero' && (heroVariant === 'desktop' || heroVariant === 'both')
   const showMobile   = uploadType === 'hero' && (heroVariant === 'mobile'  || heroVariant === 'both')
+
+  const contextSpec = CONTEXT_SPECS[context]
+  const isNews      = context === 'news'
 
   return (
     <Dialog open={open} onOpenChange={(o) => { if (!o) handleClose() }}>
       <DialogContent className="sm:max-w-[520px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
-            {step === 'copy' ? 'Add Carousel Copy' : 'Upload Image'}
+            {step === 'copy'
+              ? (isNews ? 'Add News Slide Copy' : 'Add Carousel Copy')
+              : 'Upload Image'}
           </DialogTitle>
           <DialogDescription>
             {step === 'copy'
-              ? 'Provide a headline and description for this carousel slide. Both fields are required.'
+              ? 'Provide a headline and description for this slide. Both fields are required.'
               : 'Choose what you\'re uploading and fill in the details below.'}
           </DialogDescription>
         </DialogHeader>
@@ -223,12 +243,12 @@ export default function UploadModal({ open, onClose, onUploaded }: Props) {
                     onClick={() => setUploadType(value)}
                     className={`flex flex-col items-start gap-1 rounded-xl border-2 p-4 text-left transition-colors ${
                       uploadType === value
-                        ? 'border-[#1e3a5f] bg-blue-50'
+                        ? 'border-blue-900 bg-blue-50'
                         : 'border-slate-200 hover:border-slate-300'
                     }`}
                   >
-                    <Icon className={`w-5 h-5 ${uploadType === value ? 'text-[#1e3a5f]' : 'text-slate-400'}`} />
-                    <span className={`text-sm font-semibold ${uploadType === value ? 'text-[#1e3a5f]' : 'text-slate-700'}`}>
+                    <Icon className={`w-5 h-5 ${uploadType === value ? 'text-blue-900' : 'text-slate-400'}`} />
+                    <span className={`text-sm font-semibold ${uploadType === value ? 'text-blue-900' : 'text-slate-700'}`}>
                       {label}
                     </span>
                     <span className="text-xs text-slate-400">{sub}</span>
@@ -248,14 +268,27 @@ export default function UploadModal({ open, onClose, onUploaded }: Props) {
                         ))}
                       </SelectContent>
                     </Select>
-                    {isCarousel && (
-                      <p className="text-xs text-blue-600 bg-blue-50 px-3 py-2 rounded-lg border border-blue-100">
-                        You&apos;ll add a headline &amp; description on the next step.
-                      </p>
+
+                    {/* Size spec + next-step notice for carousel & news */}
+                    {contextSpec && (
+                      <div className="rounded-lg border border-blue-100 bg-blue-50 px-3 py-2.5 space-y-1">
+                        <div className="flex items-center gap-1.5">
+                          {isNews
+                            ? <Newspaper className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                            : <GalleryHorizontal className="w-3.5 h-3.5 text-blue-600 shrink-0" />}
+                          <span className="text-xs font-semibold text-blue-700">
+                            Recommended size: {contextSpec.size} ({contextSpec.ratio})
+                          </span>
+                        </div>
+                        <p className="text-xs text-blue-600 pl-5">{contextSpec.tip}</p>
+                        <p className="text-xs text-blue-500 pl-5 pt-0.5">
+                          You&apos;ll add a headline &amp; description on the next step.
+                        </p>
+                      </div>
                     )}
                   </div>
 
-                  {!isCarousel && (
+                  {!isSlideContext && (
                     <div className="space-y-1.5">
                       <Label htmlFor="alt-text">
                         Alt text <span className="text-slate-400 font-normal">(optional)</span>
@@ -302,7 +335,7 @@ export default function UploadModal({ open, onClose, onUploaded }: Props) {
                           onClick={() => setHeroVariant(value)}
                           className={`flex flex-col items-center gap-1.5 rounded-lg border-2 py-3 text-xs font-medium transition-colors ${
                             heroVariant === value
-                              ? 'border-[#1e3a5f] bg-blue-50 text-[#1e3a5f]'
+                              ? 'border-blue-900 bg-blue-50 text-blue-900'
                               : 'border-slate-200 text-slate-600 hover:border-slate-300'
                           }`}
                         >
@@ -353,39 +386,47 @@ export default function UploadModal({ open, onClose, onUploaded }: Props) {
             </>
           )}
 
-          {/* ── Step 2: Carousel copy (mandatory) ────────────────────── */}
+          {/* ── Step 2: Slide copy (carousel & news — mandatory) ──────── */}
           {step === 'copy' && (
             <div className="space-y-4">
               {generalFile && (
                 <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-50 border border-slate-100 text-xs text-slate-500">
-                  <GalleryHorizontal className="w-3.5 h-3.5 text-blue-500 shrink-0" />
+                  {isNews
+                    ? <Newspaper className="w-3.5 h-3.5 text-blue-500 shrink-0" />
+                    : <GalleryHorizontal className="w-3.5 h-3.5 text-blue-500 shrink-0" />}
                   <span className="truncate font-medium">{generalFile.name}</span>
                 </div>
               )}
 
               <div className="space-y-1.5">
-                <Label htmlFor="carousel-title">
+                <Label htmlFor="slide-title">
                   Headline <span className="text-red-500">*</span>
                 </Label>
                 <Input
-                  id="carousel-title"
-                  placeholder="e.g. Creative Expression"
-                  value={carouselTitle}
-                  onChange={(e) => setCarouselTitle(e.target.value)}
+                  id="slide-title"
+                  placeholder={isNews ? 'e.g. Term 1 Academic Results' : 'e.g. Creative Expression'}
+                  value={slideTitle}
+                  onChange={(e) => setSlideTitle(e.target.value)}
                   autoFocus
                 />
-                <p className="text-xs text-slate-400">Large title overlaid on the slide.</p>
+                <p className="text-xs text-slate-400">
+                  {isNews
+                    ? 'Main headline shown over the news image.'
+                    : 'Large title overlaid on the carousel slide.'}
+                </p>
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="carousel-desc">
+                <Label htmlFor="slide-desc">
                   Description <span className="text-red-500">*</span>
                 </Label>
                 <Textarea
-                  id="carousel-desc"
-                  placeholder="e.g. Nurturing artistic talents through hands-on activities."
-                  value={carouselDesc}
-                  onChange={(e) => setCarouselDesc(e.target.value)}
+                  id="slide-desc"
+                  placeholder={isNews
+                    ? 'e.g. Congratulations to all students for outstanding performance this term.'
+                    : 'e.g. Nurturing artistic talents through hands-on activities.'}
+                  value={slideDesc}
+                  onChange={(e) => setSlideDesc(e.target.value)}
                   rows={3}
                 />
                 <p className="text-xs text-slate-400">Subtitle shown beneath the headline.</p>

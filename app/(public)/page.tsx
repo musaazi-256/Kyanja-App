@@ -3,10 +3,11 @@ import StatsBar from "@/components/public/stats/StatsBar";
 import WhyUsSection from "@/components/public/why-us/WhyUsSection";
 import ImageCarousel from "@/components/public/ImageCarousel";
 import ProgramsSection from "@/components/public/programs/ProgramsSection";
+import NewsSection from "@/components/public/news/NewsSection";
 import DownloadsSection from "@/components/public/DownloadsSection";
 import CtaSection from "@/components/public/cta/CtaSection";
 import { getSetting } from "@/lib/db/settings";
-import { getCarouselImages } from "@/lib/db/media";
+import { getCarouselImages, getNewsImages } from "@/lib/db/media";
 import { getPublishedDownloads } from "@/lib/db/downloads";
 
 export default async function HomePage() {
@@ -14,12 +15,13 @@ export default async function HomePage() {
   const startYear = new Date().getMonth() >= 7 ? year : year - 1;
   const academicYear = `${startYear}/${startYear + 1}`;
 
-  const [heroDesktop, heroMobile, heroLegacy, carouselImages, downloads] =
+  const [heroDesktop, heroMobile, heroLegacy, carouselImages, newsImages, downloads] =
     await Promise.all([
       getSetting("hero_image_url_desktop").catch(() => ""),
       getSetting("hero_image_url_mobile").catch(() => ""),
       getSetting("hero_image_url").catch(() => ""),
       getCarouselImages(),
+      getNewsImages(),
       getPublishedDownloads(),
     ]);
 
@@ -33,6 +35,7 @@ export default async function HomePage() {
       <WhyUsSection />
       <ImageCarousel slides={carouselImages} />
       <ProgramsSection />
+      <NewsSection images={newsImages} />
       <DownloadsSection downloads={downloads} />
       <CtaSection academicYear={academicYear} />
     </div>

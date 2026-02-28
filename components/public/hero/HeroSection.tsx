@@ -32,23 +32,12 @@ export default function HeroSection({ desktopUrl, mobileUrl }: Props) {
               Enroll Your Child
             </Link>
 
-            <a
-              href="https://www.youtube.com/@KyanjaJuniorSchool"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Watch Kyanja Junior School on YouTube"
-              className="flex items-center gap-3 text-white font-bold text-sm tracking-wide hover:opacity-80 transition-opacity group"
+            <Link
+              href="/about"
+              className="text-white font-semibold py-3.5 px-8 rounded-full border-2 border-white/40 hover:border-white hover:bg-white/10 transition-all"
             >
-              <span className="flex items-center justify-center w-10 h-10 bg-[#0052FF] group-hover:bg-blue-700 transition-colors rounded-full text-white shadow-md">
-                <svg
-                  className="w-4 h-4 ml-1"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path d="M4.5 3.5l12 6.5-12 6.5v-13z" />
-                </svg>
-              </span>
-            </a>
+              Contact Us
+            </Link>
           </div>
         </div>
 

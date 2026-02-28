@@ -44,6 +44,22 @@ export async function getCarouselImages(): Promise<MediaFile[]> {
   }
 }
 
+export async function getNewsImages(): Promise<MediaFile[]> {
+  try {
+    const supabase = await createClient()
+    const { data } = await supabase
+      .from('media_files')
+      .select('*')
+      .filter('context', 'eq', 'news')
+      .is('deleted_at', null)
+      .order('sort_order', { ascending: true })
+      .order('created_at', { ascending: false })
+    return (data ?? []) as unknown as MediaFile[]
+  } catch {
+    return []
+  }
+}
+
 export async function getGalleryImages(): Promise<MediaFile[]> {
   try {
     const supabase = await createClient()

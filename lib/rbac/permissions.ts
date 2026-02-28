@@ -18,6 +18,11 @@ export const ROLE_PERMISSIONS: RolePermissions = {
     'users:write',
     'users:roles',
     'content:write',
+    'downloads:read',
+    'downloads:upload',
+    'downloads:edit',
+    'downloads:delete',
+    'downloads:publish',
   ],
   staff: [
     'applications:read',
@@ -27,6 +32,7 @@ export const ROLE_PERMISSIONS: RolePermissions = {
     'newsletter:read',
     'media:read',
     'media:upload',
+    'downloads:read',
   ],
   teacher: [
     'applications:read',

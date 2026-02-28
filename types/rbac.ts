@@ -24,6 +24,13 @@ export const PERMISSIONS = {
 
   // Content
   'content:write': 'Edit page content',
+
+  // Downloads
+  'downloads:read':    'View downloads in admin',
+  'downloads:upload':  'Upload new download files',
+  'downloads:edit':    'Edit download metadata',
+  'downloads:delete':  'Delete downloads',
+  'downloads:publish': 'Publish / unpublish downloads',
 } as const
 
 export type Permission = keyof typeof PERMISSIONS

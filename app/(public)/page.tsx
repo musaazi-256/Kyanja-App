@@ -15,17 +15,20 @@ import ImageCarousel from "@/components/public/ImageCarousel";
 import DownloadsSection from "@/components/public/DownloadsSection";
 import AnimatedCounter from "@/components/public/AnimatedCounter";
 import { getSetting } from "@/lib/db/settings";
+import { getCarouselImages } from "@/lib/db/media";
+import { getPublishedDownloads } from "@/lib/db/downloads";
 
 export default async function HomePage() {
   const year = new Date().getFullYear();
   const startYear = new Date().getMonth() >= 7 ? year : year - 1;
   const academicYear = `${startYear}/${startYear + 1}`;
 
-  // Fetch hero image URLs; fall back to legacy single key; ignore errors (e.g. missing credentials locally)
-  const [heroDesktop, heroMobile, heroLegacy] = await Promise.all([
+  const [heroDesktop, heroMobile, heroLegacy, carouselImages, downloads] = await Promise.all([
     getSetting("hero_image_url_desktop").catch(() => ""),
     getSetting("hero_image_url_mobile").catch(() => ""),
     getSetting("hero_image_url").catch(() => ""),
+    getCarouselImages(),
+    getPublishedDownloads(),
   ]);
   const desktopUrl = heroDesktop || heroLegacy || undefined;
   const mobileUrl  = heroMobile  || heroLegacy || undefined;
@@ -136,7 +139,7 @@ export default async function HomePage() {
       </section>
 
       {/* Image Carousel Showcase */}
-      <ImageCarousel />
+      <ImageCarousel slides={carouselImages} />
 
       {/* Programs preview */}
       <section className="py-24 px-4 bg-linear-to-b from-white to-slate-50 relative">
@@ -224,7 +227,7 @@ export default async function HomePage() {
       </section>
 
       {/* Downloads Section */}
-      <DownloadsSection />
+      <DownloadsSection downloads={downloads} />
 
       {/* CTA */}
       <section className="py-20 px-4 bg-blue-900 text-white text-center">

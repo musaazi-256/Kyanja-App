@@ -104,6 +104,25 @@ export type NewsletterWithSends = Newsletter & {
   newsletter_sends: NewsletterSendWithSubscriber[]
 }
 
+// ─── Downloads ────────────────────────────────────────────────────────────────
+export interface Download {
+  id:           string
+  name:         string
+  subcopy:      string | null
+  icon:         string
+  storage_path: string
+  public_url:   string
+  file_name:    string
+  file_size:    number
+  mime_type:    string
+  published:    boolean
+  sort_order:   number
+  uploaded_by:  string
+  created_at:   string
+  updated_at:   string
+  deleted_at:   string | null
+}
+
 // ─── Calendar ─────────────────────────────────────────────────────────────────
 export interface CalendarEvent {
   id: string

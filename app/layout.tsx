@@ -1,6 +1,13 @@
 import type { Metadata } from 'next'
+import { Outfit } from 'next/font/google'
 import { Toaster } from 'sonner'
 import './globals.css'
+
+const outfit = Outfit({ 
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-outfit',
+})
 
 export const metadata: Metadata = {
   title: {
@@ -22,8 +29,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className="font-sans antialiased">
+    <html lang="en" suppressHydrationWarning className={`${outfit.variable}`}>
+      <body className="font-sans antialiased text-slate-800">
         {children}
         <Toaster position="top-right" richColors />
       </body>

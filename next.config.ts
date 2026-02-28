@@ -22,6 +22,10 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'i.ibb.co',
       },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+      },
     ],
   },
   // Needed for react-email rendering in Server Actions (Next.js 15+)

@@ -18,7 +18,11 @@ export type CalendarEvent = {
 
 const CALENDAR_ID = process.env.GOOGLE_CALENDAR_ID ?? 'staffkyanjajunior@gmail.com'
 
-export async function fetchCalendarEvents(): Promise<CalendarEvent[]> {
+export async function fetchCalendarEvents(options?: {
+  timeMin?: string
+  timeMax?: string
+  maxResults?: number
+}): Promise<CalendarEvent[]> {
   const apiKey = process.env.GOOGLE_CALENDAR_API_KEY
   if (!apiKey) return []
 
@@ -28,8 +32,9 @@ export async function fetchCalendarEvents(): Promise<CalendarEvent[]> {
       `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(CALENDAR_ID)}/events`,
     )
     url.searchParams.set('key',          apiKey)
-    url.searchParams.set('timeMin',      now)
-    url.searchParams.set('maxResults',   '20')
+    url.searchParams.set('timeMin',      options?.timeMin ?? now)
+    if (options?.timeMax) url.searchParams.set('timeMax', options.timeMax)
+    url.searchParams.set('maxResults',   String(options?.maxResults ?? 20))
     url.searchParams.set('singleEvents', 'true')
     url.searchParams.set('orderBy',      'startTime')
 

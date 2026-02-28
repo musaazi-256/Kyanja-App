@@ -62,7 +62,7 @@ export default function HeroSection({ desktopUrl, mobileUrl }: Props) {
               height={0}
               sizes="100vw"
               priority
-              className="w-full h-auto rounded-2xl shadow-lg object-cover"
+              className="w-full h-auto rounded-2xl shadow-lg object-contain"
             />
           </div>
         )}
@@ -76,7 +76,7 @@ export default function HeroSection({ desktopUrl, mobileUrl }: Props) {
                 alt="Kyanja Junior School"
                 fill
                 priority
-                className="object-cover object-center"
+                className="object-contain object-center"
                 sizes="60vw"
               />
             </div>

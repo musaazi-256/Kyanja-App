@@ -19,18 +19,18 @@ export default function HeroSection({ desktopUrl, mobileUrl }: Props) {
   }, []);
 
   const fadeLeft: React.CSSProperties = {
-    opacity:    loaded ? 1 : 0,
-    transform:  loaded ? "translateX(0)" : "translateX(-28px)",
+    opacity: loaded ? 1 : 0,
+    transform: loaded ? "translateX(0)" : "translateX(-28px)",
     transition: "opacity 0.85s ease-out, transform 0.85s ease-out",
   };
   const fadeRight: React.CSSProperties = {
-    opacity:    loaded ? 1 : 0,
-    transform:  loaded ? "translateX(0)" : "translateX(28px)",
+    opacity: loaded ? 1 : 0,
+    transform: loaded ? "translateX(0)" : "translateX(28px)",
     transition: "opacity 0.85s 0.15s ease-out, transform 0.85s 0.15s ease-out",
   };
   const fadeUp = (delay = 0): React.CSSProperties => ({
-    opacity:    loaded ? 1 : 0,
-    transform:  loaded ? "translateY(0)" : "translateY(14px)",
+    opacity: loaded ? 1 : 0,
+    transform: loaded ? "translateY(0)" : "translateY(14px)",
     transition: `opacity 0.75s ${delay}ms ease-out, transform 0.75s ${delay}ms ease-out`,
   });
 
@@ -86,19 +86,7 @@ export default function HeroSection({ desktopUrl, mobileUrl }: Props) {
             className="w-full lg:w-[42%] px-8 lg:px-14 pt-12 pb-10 lg:pt-16 lg:pb-16"
             style={fadeLeft}
           >
-            {/* Eyebrow */}
-            <div className="flex items-center gap-3 mb-6">
-              <div
-                className="h-0.5 w-8 rounded-full"
-                style={{ backgroundColor: "var(--brand-gold)" }}
-              />
-              <span
-                className="text-[11px] font-bold tracking-[0.2em] uppercase font-display"
-                style={{ color: "var(--brand-sky)" }}
-              >
-                Kampala, Uganda
-              </span>
-            </div>
+
 
             {/* Headline — Montserrat bold, brand colours */}
             <h1
@@ -153,9 +141,9 @@ export default function HeroSection({ desktopUrl, mobileUrl }: Props) {
               }}
             >
               {([
-                { end: 500, suffix: "+", l: "Students"  },
-                { end: 40,  suffix: "+", l: "Teachers"  },
-                { end: 20,  suffix: "+", l: "Years"     },
+                { end: 500, suffix: "+", l: "Students" },
+                { end: 40, suffix: "+", l: "Teachers" },
+                { end: 20, suffix: "+", l: "Years" },
                 { end: 100, suffix: "%", l: "Promotion" },
               ] as const).map(({ end, suffix, l }) => (
                 <div

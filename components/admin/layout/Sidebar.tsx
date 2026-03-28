@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils/cn'
 import {
   LayoutDashboard, Users, FileText, Mail, Image,
-  ChevronRight, BookOpen, Settings, Download,
+  ChevronRight, BookOpen, Settings, Download, Quote, Newspaper,
 } from 'lucide-react'
 import { hasPermission } from '@/lib/rbac/permissions'
 import type { Permission } from '@/types/rbac'
@@ -14,8 +14,10 @@ const NAV: { label: string; href: string; icon: React.ElementType; permission: P
   { label: 'Dashboard',     href: '/dashboard',              icon: LayoutDashboard, permission: null },
   { label: 'Applications',  href: '/dashboard/applications', icon: FileText,        permission: 'applications:read' },
   { label: 'Newsletter',    href: '/dashboard/newsletter',   icon: Mail,            permission: 'newsletter:read' },
-  { label: 'Media Library',   href: '/dashboard/media',      icon: Image,    permission: 'media:read' },
-  { label: 'Download Center', href: '/dashboard/downloads', icon: Download, permission: 'downloads:read' },
+  { label: 'News & Announcements', href: '/dashboard/media?context=news', icon: Newspaper,  permission: 'media:read' },
+  { label: 'Testimonials',         href: '/dashboard/testimonials',       icon: Quote,      permission: 'testimonials:read' },
+  { label: 'Media Library',        href: '/dashboard/media',              icon: Image,      permission: 'media:read' },
+  { label: 'Download Center',      href: '/dashboard/downloads',          icon: Download,   permission: 'downloads:read' },
   { label: 'Users',           href: '/dashboard/users',      icon: Users,    permission: 'users:read' },
   { label: 'Settings',      href: '/dashboard/settings',     icon: Settings,        permission: null },
 ]

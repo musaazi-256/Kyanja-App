@@ -123,6 +123,19 @@ export interface Download {
   deleted_at:   string | null
 }
 
+// ─── Testimonials ─────────────────────────────────────────────────────────────
+export interface Testimonial {
+  id:            string
+  quote:         string
+  author_name:   string
+  author_detail: string | null
+  initials:      string | null
+  sort_order:    number
+  published:     boolean
+  created_at:    string
+  updated_at:    string
+}
+
 // ─── Calendar ─────────────────────────────────────────────────────────────────
 export interface CalendarEvent {
   id: string

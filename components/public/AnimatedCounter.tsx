@@ -9,10 +9,14 @@ interface Props {
 }
 
 export default function AnimatedCounter({ end, suffix = "", duration = 2000 }: Props) {
+  const reduceMotion = typeof window !== "undefined"
+    && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const [count, setCount] = useState(0);
   const countRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
+    if (reduceMotion) return;
+
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting) {
@@ -49,11 +53,11 @@ export default function AnimatedCounter({ end, suffix = "", duration = 2000 }: P
     }
 
     return () => observer.disconnect();
-  }, [end, duration]);
+  }, [end, duration, reduceMotion]);
 
   return (
     <span ref={countRef}>
-      {count}
+      {reduceMotion ? end : count}
       {suffix}
     </span>
   );

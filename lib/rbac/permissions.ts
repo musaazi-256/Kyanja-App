@@ -23,6 +23,10 @@ export const ROLE_PERMISSIONS: RolePermissions = {
     'downloads:edit',
     'downloads:delete',
     'downloads:publish',
+    'testimonials:read',
+    'testimonials:write',
+    'testimonials:delete',
+    'testimonials:publish',
   ],
   staff: [
     'applications:read',

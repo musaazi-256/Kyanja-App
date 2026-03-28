@@ -11,6 +11,10 @@ export const metadata: Metadata = {
 }
 
 export default function ProgramsPage() {
+  const year = new Date().getFullYear()
+  const startYear = new Date().getMonth() >= 7 ? year : year - 1
+  const academicYear = `${startYear}/${startYear + 1}`
+
   return (
     <div>
       {/* Header */}
@@ -31,7 +35,7 @@ export default function ProgramsPage() {
       <section className="py-16 px-4">
         <div className="max-w-5xl mx-auto">
           <AnimateOnScroll>
-            <h2 className="text-3xl font-bold text-slate-900 text-center mb-10">Academic Levels</h2>
+            <h2 className="text-3xl font-bold text-slate-600 text-center mb-10">Academic Levels</h2>
           </AnimateOnScroll>
           <div className="space-y-6">
             {[
@@ -104,7 +108,7 @@ export default function ProgramsPage() {
               <span className="text-blue-600 font-semibold tracking-wider uppercase text-sm mb-2 block">
                 Beyond The Core
               </span>
-              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6 tracking-tight">Subjects & Activities</h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-slate-600 mb-6 tracking-tight">Subjects & Activities</h2>
               <div className="w-20 h-1 bg-blue-500 mx-auto rounded-full"></div>
             </div>
           </AnimateOnScroll>
@@ -137,8 +141,8 @@ export default function ProgramsPage() {
       {/* CTA */}
       <section className="py-24 px-4 text-center">
         <AnimateOnScroll>
-          <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4 tracking-tight">Enrol Your Child Today</h2>
-          <p className="text-slate-600 text-lg mb-8 max-w-xl mx-auto">Applications are now officially open for the 2025/2026 academic year.</p>
+          <h2 className="text-3xl md:text-4xl font-bold text-slate-600 mb-4 tracking-tight">Enrol Your Child Today</h2>
+          <p className="text-slate-600 text-lg mb-8 max-w-xl mx-auto">Applications are now officially open for the {academicYear} academic year.</p>
           <Button asChild size="lg" className="bg-blue-900 hover:bg-blue-800 font-bold rounded-full px-10 h-14 shadow-xl shadow-blue-900/20 active:scale-95 transition-all">
             <Link href="/admissions/apply">Start Application</Link>
           </Button>

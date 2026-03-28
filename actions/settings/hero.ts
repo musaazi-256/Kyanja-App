@@ -5,10 +5,9 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import { requirePermission } from '@/lib/rbac/check'
 import { ok, fail } from '@/lib/utils/response'
 import { AppError, ValidationError } from '@/lib/utils/errors'
+import { HERO_IMAGE_TYPES, MAX_IMAGE_BYTES } from '@/lib/media/image-rules'
 import type { ActionResult } from '@/types/app'
 
-const ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
-const MAX_BYTES      = 3 * 1024 * 1024   // 3 MB per image
 const BUCKET         = 'media'
 
 function fileExt(type: string) {
@@ -20,10 +19,10 @@ async function validateAndUpload(
   file: File,
   variant: 'desktop' | 'mobile',
 ): Promise<{ publicUrl: string; storagePath: string }> {
-  if (!ALLOWED_TYPES.includes(file.type)) {
+  if (!HERO_IMAGE_TYPES.includes(file.type as (typeof HERO_IMAGE_TYPES)[number])) {
     throw new ValidationError('Only JPEG, PNG and WEBP images are accepted')
   }
-  if (file.size > MAX_BYTES) {
+  if (file.size > MAX_IMAGE_BYTES) {
     throw new ValidationError('Each image must be under 3 MB')
   }
 

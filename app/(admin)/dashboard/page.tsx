@@ -1,7 +1,7 @@
 import { getApplicationStats } from '@/lib/db/applications'
 import { getSubscriberCount } from '@/lib/db/newsletter'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { FileText, CheckCircle, Clock, Users, XCircle, BookOpen } from 'lucide-react'
+import { FileText, CheckCircle, Clock, Users, XCircle, BookOpen, Image, Quote } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import type { Metadata } from 'next'
@@ -85,9 +85,15 @@ export default async function DashboardPage() {
               </Link>
             </Button>
             <Button asChild variant="outline" className="w-full justify-start">
-              <Link href="/dashboard/media">
-                <BookOpen className="w-4 h-4 mr-2" />
-                Manage Media Library
+              <Link href="/dashboard/media?context=news">
+                <Image className="w-4 h-4 mr-2" />
+                Manage News &amp; Announcements
+              </Link>
+            </Button>
+            <Button asChild variant="outline" className="w-full justify-start">
+              <Link href="/dashboard/testimonials">
+                <Quote className="w-4 h-4 mr-2" />
+                Manage Testimonials
               </Link>
             </Button>
           </CardContent>

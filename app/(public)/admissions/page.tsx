@@ -6,10 +6,14 @@ import AnimateOnScroll from '@/components/public/AnimateOnScroll'
 
 export const metadata: Metadata = {
   title: 'Admissions',
-  description: 'Apply for admission to Kyanja Junior School for the 2025/2026 academic year.',
+  description: 'Apply for admission to Kyanja Junior School.',
 }
 
 export default function AdmissionsPage() {
+  const year = new Date().getFullYear()
+  const startYear = new Date().getMonth() >= 7 ? year : year - 1
+  const academicYear = `${startYear}/${startYear + 1}`
+
   return (
     <div>
       {/* Header */}
@@ -19,7 +23,7 @@ export default function AdmissionsPage() {
           <span className="inline-block px-3 py-1 bg-white/10 backdrop-blur-md rounded-full text-white/80 text-xs font-bold tracking-widest uppercase mb-6 border border-white/20">
             Join Our Family
           </span>
-          <h1 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight">Admissions 2025/2026</h1>
+          <h1 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight">Admissions {academicYear}</h1>
           <p className="text-blue-100 text-lg md:text-xl font-medium max-w-2xl mx-auto mb-10">
             Take the first step towards securing a bright future for your child at Kyanja Junior School.
           </p>
@@ -40,7 +44,7 @@ export default function AdmissionsPage() {
               <span className="text-blue-600 font-semibold tracking-wider uppercase text-sm mb-2 block">
                 How to Apply
               </span>
-              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6 tracking-tight">Admission Process</h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-slate-600 mb-6 tracking-tight">Admission Process</h2>
               <div className="w-20 h-1 bg-blue-500 mx-auto rounded-full"></div>
             </div>
           </AnimateOnScroll>
@@ -74,7 +78,7 @@ export default function AdmissionsPage() {
         <div className="max-w-4xl mx-auto">
           <AnimateOnScroll>
             <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6 tracking-tight">Requirements</h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-slate-600 mb-6 tracking-tight">Requirements</h2>
               <div className="w-20 h-1 bg-blue-500 mx-auto rounded-full"></div>
             </div>
           </AnimateOnScroll>
@@ -107,7 +111,7 @@ export default function AdmissionsPage() {
         <div className="max-w-3xl mx-auto text-center bg-white rounded-[2.5rem] p-10 md:p-14 border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden">
           <div className="absolute inset-0 bg-linear-to-br from-blue-50/50 via-transparent to-transparent"></div>
           <div className="relative z-10">
-            <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-4 tracking-tight">School Fees & Payment Info</h2>
+            <h2 className="text-2xl md:text-3xl font-bold text-slate-600 mb-4 tracking-tight">School Fees & Payment Info</h2>
             <p className="text-slate-600 text-[15px] leading-relaxed mb-8 max-w-xl mx-auto">
               For complete transparency regarding school fees, term payments, and available bursaries for the upcoming academic year, please contact our admissions office directly.
             </p>

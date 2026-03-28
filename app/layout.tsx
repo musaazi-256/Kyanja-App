@@ -1,12 +1,18 @@
 import type { Metadata } from 'next'
-import { Outfit } from 'next/font/google'
+import { Montserrat, DM_Sans } from 'next/font/google'
 import { Toaster } from 'sonner'
 import './globals.css'
 
-const outfit = Outfit({ 
+const montserrat = Montserrat({
   subsets: ['latin'],
   display: 'swap',
-  variable: '--font-outfit',
+  variable: '--font-montserrat',
+})
+
+const dmSans = DM_Sans({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-dm-sans',
 })
 
 export const metadata: Metadata = {
@@ -29,7 +35,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${outfit.variable}`}>
+    <html lang="en" suppressHydrationWarning className={`${montserrat.variable} ${dmSans.variable}`}>
       <body className="font-sans antialiased text-slate-800">
         {children}
         <Toaster position="top-right" richColors />

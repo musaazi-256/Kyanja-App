@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils/cn'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
-import { Menu, BookOpen, X } from 'lucide-react'
+import { Menu, BookOpen } from 'lucide-react'
 
 const LINKS = [
   { label: 'Home',       href: '/' },
@@ -30,7 +30,7 @@ export default function Navbar() {
             <BookOpen className="w-5 h-5 text-white" />
           </div>
           <div>
-            <p className="font-bold text-blue-900 leading-tight text-[15px] group-hover:text-blue-800 transition-colors">Kyanja Junior School</p>
+            <p className="font-display font-bold text-brand-navy leading-tight text-[15px] transition-colors">Kyanja Junior School</p>
             <p className="text-[10px] text-slate-400 font-semibold tracking-widest uppercase mt-0.5">Kampala, Uganda</p>
           </div>
         </Link>
@@ -62,7 +62,12 @@ export default function Navbar() {
         {/* Mobile menu */}
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger asChild>
-            <Button variant="ghost" size="icon" className="md:hidden rounded-full hover:bg-slate-100 transition-colors">
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label="Open navigation menu"
+              className="md:hidden rounded-full hover:bg-slate-100 transition-colors"
+            >
               <Menu className="w-5 h-5 text-slate-700" />
             </Button>
           </SheetTrigger>

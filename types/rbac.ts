@@ -25,6 +25,12 @@ export const PERMISSIONS = {
   // Content
   'content:write': 'Edit page content',
 
+  // Testimonials
+  'testimonials:read':    'View testimonials in admin',
+  'testimonials:write':   'Create and edit testimonials',
+  'testimonials:delete':  'Delete testimonials',
+  'testimonials:publish': 'Publish / unpublish testimonials',
+
   // Downloads
   'downloads:read':    'View downloads in admin',
   'downloads:upload':  'Upload new download files',

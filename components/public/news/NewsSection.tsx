@@ -1,113 +1,98 @@
-"use client";
-
-import { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
-import { ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
-import { cn } from "@/lib/utils";
+import Link from "next/link";
+import { ArrowRight, CalendarDays } from "lucide-react";
 import type { MediaFile } from "@/types/app";
+import AnimateOnScroll from "@/components/public/AnimateOnScroll";
 
-// ── Static fallback slides ────────────────────────────────────────────────────
-const FALLBACK_SLIDES = [
+// ── Static fallback cards ─────────────────────────────────────────────────────
+const FALLBACK_CARDS = [
   {
     id: "fb1",
-    src: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?q=80&w=2032",
+    src: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?q=80&w=800",
     title: "Term 1 Academic Results",
-    caption: "Congratulations to all students and teachers for outstanding performance this term.",
+    caption:
+      "Congratulations to all students and teachers for outstanding performance this term. Our P7 candidates achieved a 100% pass rate.",
+    date: "March 2026",
   },
   {
     id: "fb2",
-    src: "https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=2032",
+    src: "https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=800",
     title: "Sports Day 2026",
-    caption: "Students showcase their athletic talents in our annual inter-house sports competition.",
+    caption:
+      "Students showcased their athletic talents in our annual inter-house sports competition. House Red took the overall trophy.",
+    date: "February 2026",
   },
   {
     id: "fb3",
-    src: "https://images.unsplash.com/photo-1532012197267-da84d127e765?q=80&w=2070",
-    title: "Reading Week",
-    caption: "Encouraging a love of reading across all classes with our annual reading challenge.",
+    src: "https://images.unsplash.com/photo-1532012197267-da84d127e765?q=80&w=800",
+    title: "Annual Reading Week",
+    caption:
+      "Encouraging a love of reading across all classes with our annual reading challenge — over 1,200 books read school-wide.",
+    date: "January 2026",
   },
 ];
 
-// ── Types ─────────────────────────────────────────────────────────────────────
-
-interface Slide {
+interface Card {
   id: string;
   src: string;
   title: string;
   caption: string;
+  date: string;
 }
 
-function toSlide(f: MediaFile): Slide {
+function toCard(f: MediaFile): Card {
   return {
     id:      f.id,
     src:     f.public_url ?? "",
     title:   f.alt_text  ?? "School News",
     caption: f.caption   ?? "",
+    date:    new Date(f.created_at ?? Date.now()).toLocaleDateString("en-UG", {
+      month: "long",
+      year:  "numeric",
+    }),
   };
 }
 
-// ── Atoms ─────────────────────────────────────────────────────────────────────
+// ── Atom ──────────────────────────────────────────────────────────────────────
 
-interface NavButtonProps {
-  onClick: () => void;
-  label: string;
-  children: React.ReactNode;
-  side: "left" | "right";
-}
-
-function NavButton({ onClick, label, children, side }: NavButtonProps) {
+function NewsCard({ src, title, caption, date }: Omit<Card, "id">) {
   return (
-    <button
-      onClick={onClick}
-      aria-label={label}
-      className={cn(
-        "absolute top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full",
-        "bg-white/15 backdrop-blur-sm border border-white/25",
-        "flex items-center justify-center text-white",
-        "hover:bg-white/30 transition-all duration-200",
-        side === "left" ? "left-4" : "right-4",
-      )}
-    >
-      {children}
-    </button>
-  );
-}
+    <div className="group bg-white border border-slate-100 rounded-[1.75rem] overflow-hidden flex flex-col h-full hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
+      {/* Image */}
+      <div className="relative h-52 w-full shrink-0 overflow-hidden bg-slate-100">
+        <Image
+          src={src}
+          alt={title}
+          fill
+          className="object-cover transition-transform duration-500 group-hover:scale-105"
+          sizes="(max-width: 768px) 100vw, 33vw"
+          unoptimized={src.startsWith("https://images.unsplash")}
+        />
+        {/* Date pill */}
+        <div
+          className="absolute top-3 left-3 flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold backdrop-blur-sm"
+          style={{
+            backgroundColor: "rgba(0,0,153,0.75)",
+            color: "white",
+          }}
+        >
+          <CalendarDays className="w-3 h-3" />
+          {date}
+        </div>
+      </div>
 
-interface PlayPauseButtonProps {
-  isPaused: boolean;
-  onToggle: () => void;
-}
-
-function PlayPauseButton({ isPaused, onToggle }: PlayPauseButtonProps) {
-  return (
-    <button
-      onClick={onToggle}
-      aria-label={isPaused ? "Play slideshow" : "Pause slideshow"}
-      className="absolute top-4 right-4 z-20 w-9 h-9 rounded-full bg-black/40 backdrop-blur-sm border border-white/20 flex items-center justify-center text-white hover:bg-black/60 transition-all duration-200"
-    >
-      {isPaused ? <Play className="w-4 h-4 ml-0.5" /> : <Pause className="w-4 h-4" />}
-    </button>
-  );
-}
-
-interface DotProps {
-  active: boolean;
-  onClick: () => void;
-  index: number;
-}
-
-function Dot({ active, onClick, index }: DotProps) {
-  return (
-    <button
-      onClick={onClick}
-      aria-label={`Go to slide ${index + 1}`}
-      className={cn(
-        "transition-all duration-300 rounded-full",
-        active
-          ? "w-6 h-2 bg-white"
-          : "w-2 h-2 bg-white/40 hover:bg-white/70",
-      )}
-    />
+      {/* Content */}
+      <div className="p-6 flex flex-col grow">
+        <h3 className="font-display text-lg font-bold text-slate-900 mb-2 leading-snug group-hover:text-brand-navy transition-colors">
+          {title}
+        </h3>
+        {caption && (
+          <p className="text-slate-500 text-sm leading-relaxed line-clamp-3 grow">
+            {caption}
+          </p>
+        )}
+      </div>
+    </div>
   );
 }
 
@@ -118,119 +103,47 @@ interface Props {
 }
 
 export default function NewsSection({ images: dbImages }: Props) {
-  const slides: Slide[] =
-    dbImages && dbImages.length > 0 ? dbImages.map(toSlide) : FALLBACK_SLIDES;
-
-  const [current,  setCurrent]  = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
-  const [isInView, setIsInView] = useState(false);
-
-  const sectionRef = useRef<HTMLElement>(null);
-  const timerRef   = useRef<NodeJS.Timeout | null>(null);
-
-  // Detect when the section scrolls into view
-  useEffect(() => {
-    const el = sectionRef.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => setIsInView(entry.isIntersecting),
-      { threshold: 0.3 },
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-
-  const next = useCallback(() => {
-    setCurrent((prev) => (prev + 1) % slides.length);
-  }, [slides.length]);
-
-  const prev = useCallback(() => {
-    setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
-  }, [slides.length]);
-
-  // Auto-advance only when in view and not paused
-  useEffect(() => {
-    if (timerRef.current) clearInterval(timerRef.current);
-    if (isInView && !isPaused) {
-      timerRef.current = setInterval(next, 5000);
-    }
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-    };
-  }, [next, isInView, isPaused]);
-
-  // Reset index if slide count changes
-  useEffect(() => { setCurrent(0); }, [slides.length]);
+  const cards: Card[] =
+    dbImages && dbImages.length > 0
+      ? dbImages.slice(0, 3).map(toCard)
+      : FALLBACK_CARDS;
 
   return (
-    <section ref={sectionRef} className="py-20 px-4 bg-white">
+    <section className="py-24 px-4 bg-slate-50">
       <div className="max-w-6xl mx-auto">
-
-        {/* Section header */}
-        <div className="text-center mb-12">
-          <span className="text-blue-600 font-semibold tracking-wider uppercase text-sm mb-2 block">
-            Latest Updates
-          </span>
-          <h2 className="text-4xl font-bold text-slate-900 mb-6 tracking-tight">
-            News &amp; Announcements
-          </h2>
-          <div className="w-24 h-1 bg-blue-500 mx-auto rounded-full" />
-        </div>
-
-        {/* Carousel */}
-        <div className="relative w-full rounded-[2rem] overflow-hidden shadow-2xl aspect-video">
-
-          {/* Slides */}
-          <div
-            className="flex h-full transition-transform duration-700 ease-[cubic-bezier(0.25,1,0.5,1)]"
-            style={{ transform: `translateX(-${current * 100}%)` }}
-          >
-            {slides.map((slide, i) => (
-              <div key={slide.id} className="w-full shrink-0 relative h-full bg-slate-950">
-                <Image
-                  src={slide.src}
-                  alt={slide.title}
-                  fill
-                  className="object-contain"
-                  sizes="(max-width: 1200px) 100vw, 1200px"
-                  priority={i === 0}
-                  unoptimized={slide.src.startsWith("https://images.unsplash")}
-                />
-                {/* Gradient overlay + text */}
-                <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-4 sm:p-6 md:p-10">
-                  <h3 className="text-white text-base sm:text-xl md:text-2xl lg:text-3xl font-bold mb-1 sm:mb-2 drop-shadow leading-tight">
-                    {slide.title}
-                  </h3>
-                  {slide.caption && (
-                    <p className="text-white/80 text-xs sm:text-sm md:text-base max-w-2xl leading-relaxed">
-                      {slide.caption}
-                    </p>
-                  )}
-                </div>
-              </div>
-            ))}
+        <AnimateOnScroll>
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-14">
+            <div>
+              <span
+                className="font-bold tracking-wider uppercase text-sm mb-2 block"
+                style={{ color: "var(--brand-navy)" }}
+              >
+                Latest Updates
+              </span>
+              <h2 className="font-display text-4xl md:text-5xl font-bold text-slate-900 tracking-tight">
+                News &amp; Announcements
+              </h2>
+              <div
+                className="w-24 h-1 rounded-full mt-5"
+                style={{ backgroundColor: "var(--brand-gold)" }}
+              />
+            </div>
+            <Link
+              href="/schedule"
+              className="inline-flex items-center gap-1.5 text-sm font-semibold shrink-0 hover:opacity-70 transition-opacity"
+              style={{ color: "var(--brand-navy)" }}
+            >
+              View School Calendar <ArrowRight className="w-4 h-4" />
+            </Link>
           </div>
+        </AnimateOnScroll>
 
-          {/* Controls */}
-          <PlayPauseButton isPaused={isPaused} onToggle={() => setIsPaused((p) => !p)} />
-          <NavButton onClick={prev} label="Previous slide" side="left">
-            <ChevronLeft className="w-5 h-5" />
-          </NavButton>
-          <NavButton onClick={next} label="Next slide" side="right">
-            <ChevronRight className="w-5 h-5" />
-          </NavButton>
-
-          {/* Dots */}
-          <div className="absolute bottom-5 left-0 right-0 flex items-center justify-center gap-2 z-20">
-            {slides.map((_, i) => (
-              <Dot key={i} index={i} active={i === current} onClick={() => setCurrent(i)} />
-            ))}
-          </div>
-
-          {/* Slide counter */}
-          <div className="absolute top-4 left-4 z-20 text-xs font-semibold text-white/70 bg-black/30 backdrop-blur-sm px-2.5 py-1 rounded-full">
-            {current + 1} / {slides.length}
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {cards.map((card, i) => (
+            <AnimateOnScroll key={card.id} delay={i * 100} className="h-full">
+              <NewsCard {...card} />
+            </AnimateOnScroll>
+          ))}
         </div>
       </div>
     </section>

@@ -17,6 +17,9 @@ import {
   Dialog, DialogContent, DialogDescription, DialogFooter,
   DialogHeader, DialogTitle,
 } from '@/components/ui/dialog'
+import {
+  GENERAL_IMAGE_TYPES, HERO_IMAGE_TYPES, fileAcceptList, imageTypeLabel, validateImageFile,
+} from '@/lib/media/image-rules'
 import { uploadMedia } from '@/actions/media/upload'
 import { uploadHeroImages } from '@/actions/settings/hero'
 import type { MediaContext as BaseMediaContext } from '@/types/app'
@@ -35,7 +38,7 @@ const CONTEXTS: { value: MediaContext; label: string }[] = [
   { value: 'carousel',     label: 'Carousel' },
   { value: 'gallery',      label: 'Gallery' },
   { value: 'admissions',   label: 'Admissions' },
-  { value: 'news',         label: 'News' },
+  { value: 'news',         label: 'News & Announcements' },
   { value: 'page_content', label: 'Page Content' },
   { value: 'profile',      label: 'Profile' },
 ]
@@ -70,6 +73,8 @@ interface DropZoneProps {
 }
 
 function DropZone({ file, inputRef, accept, onChange, hint }: DropZoneProps) {
+  const fileTypeLabel = file?.type.split('/')[1]?.toUpperCase() ?? 'FILE'
+
   return (
     <div className="space-y-1">
       <input ref={inputRef} type="file" accept={accept} className="hidden" onChange={onChange} />
@@ -82,7 +87,7 @@ function DropZone({ file, inputRef, accept, onChange, hint }: DropZoneProps) {
           <div className="text-sm">
             <p className="font-medium text-slate-700">{file.name}</p>
             <p className="text-slate-400 mt-0.5 text-xs">
-              {(file.size / 1024 / 1024).toFixed(2)} MB · {file.type.split('/')[1].toUpperCase()}
+              {(file.size / 1024 / 1024).toFixed(2)} MB · {fileTypeLabel}
             </p>
             <p className="text-blue-900 text-xs mt-1.5 underline underline-offset-2">Click to replace</p>
           </div>
@@ -307,17 +312,24 @@ export default function UploadModal({ open, onClose, onUploaded }: Props) {
                     <DropZone
                       file={generalFile}
                       inputRef={generalRef}
-                      accept="image/jpeg,image/png,image/webp"
+                      accept={fileAcceptList(GENERAL_IMAGE_TYPES)}
                       onChange={(e) => {
                         const f = e.target.files?.[0] ?? null
-                        if (f && f.size > 3 * 1024 * 1024) {
-                          toast.error('Image must be under 3 MB')
+                        if (!f) {
+                          setGeneralFile(null)
+                          return
+                        }
+
+                        const error = validateImageFile(f, GENERAL_IMAGE_TYPES)
+                        if (error) {
+                          toast.error(error)
+                          setGeneralFile(null)
                           if (generalRef.current) generalRef.current.value = ''
                           return
                         }
                         setGeneralFile(f)
                       }}
-                      hint="JPEG · PNG · WEBP · Max 3 MB"
+                      hint={`${imageTypeLabel(GENERAL_IMAGE_TYPES)} · Max 3 MB`}
                     />
                   </div>
                 </div>
@@ -355,8 +367,22 @@ export default function UploadModal({ open, onClose, onUploaded }: Props) {
                       <DropZone
                         file={desktopFile}
                         inputRef={desktopRef}
-                        accept="image/jpeg,image/png,image/webp"
-                        onChange={(e) => setDesktopFile(e.target.files?.[0] ?? null)}
+                        accept={fileAcceptList(HERO_IMAGE_TYPES)}
+                        onChange={(e) => {
+                          const f = e.target.files?.[0] ?? null
+                          if (!f) {
+                            setDesktopFile(null)
+                            return
+                          }
+                          const error = validateImageFile(f, HERO_IMAGE_TYPES)
+                          if (error) {
+                            toast.error(error)
+                            setDesktopFile(null)
+                            if (desktopRef.current) desktopRef.current.value = ''
+                            return
+                          }
+                          setDesktopFile(f)
+                        }}
                         hint="Click to choose desktop image"
                       />
                     </div>
@@ -371,15 +397,29 @@ export default function UploadModal({ open, onClose, onUploaded }: Props) {
                       <DropZone
                         file={mobileFile}
                         inputRef={mobileRef}
-                        accept="image/jpeg,image/png,image/webp"
-                        onChange={(e) => setMobileFile(e.target.files?.[0] ?? null)}
+                        accept={fileAcceptList(HERO_IMAGE_TYPES)}
+                        onChange={(e) => {
+                          const f = e.target.files?.[0] ?? null
+                          if (!f) {
+                            setMobileFile(null)
+                            return
+                          }
+                          const error = validateImageFile(f, HERO_IMAGE_TYPES)
+                          if (error) {
+                            toast.error(error)
+                            setMobileFile(null)
+                            if (mobileRef.current) mobileRef.current.value = ''
+                            return
+                          }
+                          setMobileFile(f)
+                        }}
                         hint="Click to choose mobile image"
                       />
                     </div>
                   )}
 
                   <p className="text-xs text-slate-400 pt-1">
-                    Accepted: JPEG · PNG · WEBP &nbsp;·&nbsp; Max 3 MB per image
+                    Accepted: {imageTypeLabel(HERO_IMAGE_TYPES)} &nbsp;·&nbsp; Max 3 MB per image
                   </p>
                 </div>
               )}

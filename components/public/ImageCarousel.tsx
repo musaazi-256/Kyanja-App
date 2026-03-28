@@ -166,8 +166,7 @@ export default function ImageCarousel({ slides: dbSlides }: Props) {
     };
   }, [nextSlide, isInView, isPaused]);
 
-  // Reset index if slides change (e.g. navigating back to home)
-  useEffect(() => { setCurrentIndex(0); }, [slides.length]);
+  const activeIndex = currentIndex % slides.length;
 
   return (
     <section ref={sectionRef} className="py-20 px-4 bg-white">
@@ -175,7 +174,7 @@ export default function ImageCarousel({ slides: dbSlides }: Props) {
         <span className="text-blue-600 font-semibold tracking-wider uppercase text-sm mb-2 block">
           Life at School
         </span>
-        <h2 className="text-4xl font-bold text-slate-900 mb-6 tracking-tight">
+        <h2 className="text-4xl font-bold text-slate-600 mb-6 tracking-tight">
           A Glimpse Into Kyanja Junior
         </h2>
         <div className="w-24 h-1 bg-blue-500 mx-auto rounded-full mb-6" />
@@ -185,7 +184,7 @@ export default function ImageCarousel({ slides: dbSlides }: Props) {
         {/* Slides */}
         <div
           className="flex transition-transform duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] h-[400px] sm:h-[500px] md:h-[600px]"
-          style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+          style={{ transform: `translateX(-${activeIndex * 100}%)` }}
         >
           {slides.map((slide, index) => (
             <div key={slide.id} className="w-full shrink-0 relative h-full">
@@ -222,13 +221,13 @@ export default function ImageCarousel({ slides: dbSlides }: Props) {
         {/* Pill dots */}
         <div className="absolute bottom-6 left-0 right-0 flex items-center justify-center gap-2 z-20">
           {slides.map((_, index) => (
-            <Dot key={index} index={index} active={index === currentIndex} onClick={() => setCurrentIndex(index)} />
+            <Dot key={index} index={index} active={index === activeIndex} onClick={() => setCurrentIndex(index)} />
           ))}
         </div>
 
         {/* Slide counter */}
         <div className="absolute top-4 left-4 z-20 text-xs font-semibold text-white/70 bg-black/30 backdrop-blur-sm px-2.5 py-1 rounded-full">
-          {currentIndex + 1} / {slides.length}
+          {activeIndex + 1} / {slides.length}
         </div>
       </div>
     </section>

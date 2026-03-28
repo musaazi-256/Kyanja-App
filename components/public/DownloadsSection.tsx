@@ -73,14 +73,10 @@ function dbToDoc(dl: DownloadItem): NormalisedDoc {
   };
 }
 
-/** Opens the file in a new tab for preview, then auto-downloads it as a file. */
+/** Downloads the file once; falls back to opening in a new tab if fetch fails. */
 async function handleDownload(fileUrl: string, fileName: string) {
   if (!fileUrl || fileUrl === "#") return;
 
-  // Open for in-browser preview
-  window.open(fileUrl, "_blank", "noopener,noreferrer");
-
-  // Fetch as blob so the browser triggers a Save dialog instead of navigating
   try {
     const res  = await fetch(fileUrl);
     const blob = await res.blob();
@@ -93,7 +89,7 @@ async function handleDownload(fileUrl: string, fileName: string) {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
   } catch {
-    // Silent fail — the preview tab is already open
+    window.open(fileUrl, "_blank", "noopener,noreferrer");
   }
 }
 
@@ -123,7 +119,7 @@ export default function DownloadsSection({ downloads: dbDownloads }: Props) {
             <span className="text-blue-600 font-semibold tracking-wider uppercase text-sm mb-2 block">
               Resources
             </span>
-            <h2 className="text-4xl font-bold text-slate-900 mb-6 tracking-tight">
+            <h2 className="text-4xl font-bold text-slate-600 mb-6 tracking-tight">
               Download Center
             </h2>
             <div className="w-24 h-1 bg-blue-500 mx-auto rounded-full mb-6" />

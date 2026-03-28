@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
@@ -41,7 +42,7 @@ export default function Topbar({ profile }: Props) {
       {/* Mobile menu */}
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetTrigger asChild>
-          <Button variant="ghost" size="icon" className="lg:hidden">
+          <Button variant="ghost" size="icon" aria-label="Open sidebar menu" className="lg:hidden">
             <Menu className="w-5 h-5" />
           </Button>
         </SheetTrigger>
@@ -55,7 +56,7 @@ export default function Topbar({ profile }: Props) {
       {/* User menu */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="flex items-center gap-2 h-9 px-2">
+          <Button variant="ghost" aria-label="Open user menu" className="flex items-center gap-2 h-9 px-2">
             <Avatar className="w-7 h-7">
               <AvatarImage src={profile?.avatar_url ?? undefined} />
               <AvatarFallback className="text-xs bg-blue-900 text-white">
@@ -75,9 +76,11 @@ export default function Topbar({ profile }: Props) {
             </div>
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link href="/dashboard/settings">
             <User className="w-4 h-4 mr-2" />
             My Profile
+            </Link>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={handleSignOut} className="text-red-600">

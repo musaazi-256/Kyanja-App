@@ -33,7 +33,7 @@ export default function AboutPage() {
               <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                 <CheckCircle className="w-7 h-7 text-blue-600" />
               </div>
-              <h2 className="text-2xl font-bold text-slate-900 mb-4 tracking-tight group-hover:text-blue-600 transition-colors">Our Mission</h2>
+              <h2 className="text-2xl font-bold text-slate-600 mb-4 tracking-tight group-hover:text-blue-600 transition-colors">Our Mission</h2>
               <p className="text-slate-600 leading-relaxed text-[15px]">
                 To provide a high quality, nurturing education that develops the whole child —
                 academically, socially, emotionally and spiritually — equipping every learner
@@ -70,7 +70,7 @@ export default function AboutPage() {
               <span className="text-blue-600 font-semibold tracking-wider uppercase text-sm mb-2 block">
                 What Drives Us
               </span>
-              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6 tracking-tight">Our Core Values</h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-slate-600 mb-6 tracking-tight">Our Core Values</h2>
               <div className="w-20 h-1 bg-blue-500 mx-auto rounded-full"></div>
             </div>
           </AnimateOnScroll>
@@ -102,7 +102,7 @@ export default function AboutPage() {
         <div className="max-w-5xl mx-auto">
           <AnimateOnScroll>
             <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6 tracking-tight">Visit Our Campus</h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-slate-600 mb-6 tracking-tight">Visit Our Campus</h2>
               <div className="w-20 h-1 bg-blue-500 mx-auto rounded-full mb-6"></div>
               <p className="text-slate-600">We welcome parents and guardians to tour our facilities.</p>
             </div>

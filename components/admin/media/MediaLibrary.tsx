@@ -24,11 +24,14 @@ import {
 import UploadModal from './UploadModal'
 import type { MediaFile, PaginationMeta, MediaContext } from '@/types/app'
 
-const CONTEXTS: { value: MediaContext; label: string }[] = [
+type MediaContextFilter = MediaContext | 'carousel'
+
+const CONTEXTS: { value: MediaContextFilter; label: string }[] = [
+  { value: 'carousel',     label: 'Carousel' },
   { value: 'hero',         label: 'Hero' },
   { value: 'gallery',      label: 'Gallery' },
   { value: 'admissions',   label: 'Admissions' },
-  { value: 'news',         label: 'News' },
+  { value: 'news',         label: 'News & Announcements' },
   { value: 'page_content', label: 'Page Content' },
   { value: 'profile',      label: 'Profile' },
 ]
@@ -89,7 +92,7 @@ export default function MediaLibrary({ initialFiles, meta }: Props) {
     })
   }
 
-  const activeContext = searchParams.get('context') as MediaContext | null
+  const activeContext = searchParams.get('context') as MediaContextFilter | null
   const activeSearch  = searchParams.get('search') ?? ''
 
   return (

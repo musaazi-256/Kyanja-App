@@ -39,7 +39,7 @@ export async function uploadMedia(formData: FormData): Promise<ActionResult<{ ur
     const maxSize = MAX_FILE_SIZES[bucket]
 
     if (file.size > maxSize) return fail(new Error(`File exceeds maximum size`))
-    if (!ALLOWED_IMAGE_TYPES.includes(file.type)) return fail(new Error('File type not allowed'))
+    if (!ALLOWED_IMAGE_TYPES.includes(file.type as (typeof ALLOWED_IMAGE_TYPES)[number])) return fail(new Error('File type not allowed'))
 
     await ensureBucketExists(bucket)
 

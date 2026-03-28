@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
-import { Switch } from '@/components/ui/switch'
+import { Checkbox } from '@/components/ui/checkbox'
 import {
   Dialog, DialogContent, DialogFooter,
   DialogHeader, DialogTitle,
@@ -148,10 +148,10 @@ function FormDialog({ open, onClose, existing }: FormDialogProps) {
               />
             </div>
             <div className="flex items-center gap-2 pt-6">
-              <Switch
+              <Checkbox
                 id="published"
                 checked={form.published}
-                onCheckedChange={(v) => set('published', v)}
+                onCheckedChange={(checked) => set('published', checked === true)}
               />
               <Label htmlFor="published">Published</Label>
             </div>

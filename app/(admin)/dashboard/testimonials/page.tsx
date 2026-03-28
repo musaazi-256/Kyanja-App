@@ -8,7 +8,7 @@ export const metadata: Metadata = { title: 'Testimonials' }
 export default async function TestimonialsPage() {
   await requirePermission('testimonials:read')
 
-  let testimonials = []
+  let testimonials: Awaited<ReturnType<typeof getAllTestimonials>> = []
   let migrationNeeded = false
 
   try {

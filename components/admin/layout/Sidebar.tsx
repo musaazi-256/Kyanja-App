@@ -39,8 +39,8 @@ export default function Sidebar({ role, onClose }: Props) {
     <div className="flex flex-col h-full bg-blue-900 text-white w-64">
       {/* Logo */}
       <div className="flex items-center gap-3 px-6 py-5 border-b border-white/10">
-        <div className="w-9 h-9 shrink-0">
-          <NextImage src="/logo.svg" alt="Kyanja Junior School logo" width={36} height={36} className="w-9 h-9 object-contain" />
+        <div className="w-9 h-9 shrink-0 bg-white rounded-lg p-0.5">
+          <NextImage src="/logo.svg" alt="Kyanja Junior School logo" width={36} height={36} className="w-full h-full object-contain" />
         </div>
         <div>
           <p className="font-semibold text-sm leading-tight">Kyanja Junior</p>

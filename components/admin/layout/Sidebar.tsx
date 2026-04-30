@@ -3,9 +3,10 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils/cn'
+import NextImage from 'next/image'
 import {
   LayoutDashboard, Users, FileText, Mail, Image,
-  ChevronRight, BookOpen, Settings, Download, Quote, Newspaper,
+  ChevronRight, Settings, Download, Quote, Newspaper,
 } from 'lucide-react'
 import { hasPermission } from '@/lib/rbac/permissions'
 import type { Permission } from '@/types/rbac'
@@ -38,8 +39,8 @@ export default function Sidebar({ role, onClose }: Props) {
     <div className="flex flex-col h-full bg-blue-900 text-white w-64">
       {/* Logo */}
       <div className="flex items-center gap-3 px-6 py-5 border-b border-white/10">
-        <div className="w-9 h-9 bg-white/10 rounded-lg flex items-center justify-center shrink-0">
-          <BookOpen className="w-5 h-5 text-white" />
+        <div className="w-9 h-9 shrink-0">
+          <NextImage src="/logo.svg" alt="Kyanja Junior School logo" width={36} height={36} className="w-9 h-9 object-contain" />
         </div>
         <div>
           <p className="font-semibold text-sm leading-tight">Kyanja Junior</p>

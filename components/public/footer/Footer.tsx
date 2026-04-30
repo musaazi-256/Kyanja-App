@@ -1,5 +1,6 @@
 import Link from 'next/link'
-import { BookOpen, Mail, Phone, MapPin } from 'lucide-react'
+import Image from 'next/image'
+import { Mail, Phone, MapPin } from 'lucide-react'
 
 export default function Footer() {
   return (
@@ -9,8 +10,8 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center border border-blue-100 shadow-sm">
-                <BookOpen className="w-5 h-5 text-blue-600" />
+              <div className="w-10 h-10 shrink-0">
+                <Image src="/logo.svg" alt="Kyanja Junior School logo" width={40} height={40} className="w-10 h-10 object-contain" />
               </div>
               <span className="font-bold text-xl tracking-tight">Kyanja Junior School</span>
             </div>

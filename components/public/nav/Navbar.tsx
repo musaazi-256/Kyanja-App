@@ -6,7 +6,8 @@ import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils/cn'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
-import { Menu, BookOpen } from 'lucide-react'
+import Image from 'next/image'
+import { Menu } from 'lucide-react'
 
 const LINKS = [
   { label: 'Home',       href: '/' },
@@ -26,8 +27,8 @@ export default function Navbar() {
       <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2.5 group">
-          <div className="w-9 h-9 bg-blue-900 rounded-lg flex items-center justify-center transition-transform group-hover:scale-105 group-hover:rotate-3">
-            <BookOpen className="w-5 h-5 text-white" />
+          <div className="w-9 h-9 transition-transform group-hover:scale-105 group-hover:rotate-3 shrink-0">
+            <Image src="/logo.svg" alt="Kyanja Junior School logo" width={36} height={36} className="w-9 h-9 object-contain" />
           </div>
           <div>
             <p className="font-display font-bold text-brand-navy leading-tight text-[15px] transition-colors">Kyanja Junior School</p>

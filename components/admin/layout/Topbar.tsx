@@ -12,6 +12,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { Menu, LogOut, User } from 'lucide-react'
+import Image from 'next/image'
 import Sidebar from './Sidebar'
 import type { Profile } from '@/types/app'
 
@@ -50,6 +51,12 @@ export default function Topbar({ profile }: Props) {
           <Sidebar role={profile?.role} onClose={() => setOpen(false)} />
         </SheetContent>
       </Sheet>
+
+      {/* School logo — visible on mobile where sidebar is hidden */}
+      <Link href="/dashboard" className="flex items-center gap-2 lg:hidden">
+        <Image src="/logo.svg" alt="Kyanja Junior School" width={28} height={28} className="w-7 h-7 object-contain" />
+        <span className="font-semibold text-sm text-slate-800 leading-tight">Kyanja Junior</span>
+      </Link>
 
       <div className="flex-1" />
 

@@ -219,7 +219,7 @@ export async function sendPasswordResetEmail(formData: FormData): Promise<Action
         500,
       )
     }
-    const redirectTo = `${siteUrlReset}/auth/callback`
+    const redirectTo = `${siteUrlReset}/auth/callback?next=/auth/set-password`
 
     const { error } = await supabase.auth.resetPasswordForEmail(profile.email, { redirectTo })
     if (error) throw new AppError(error.message, 'AUTH_ERROR', 400)

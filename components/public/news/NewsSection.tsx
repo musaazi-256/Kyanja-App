@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { imageUrl } from "@/lib/media/image-url";
 import { ArrowRight, CalendarDays } from "lucide-react";
 import type { MediaFile } from "@/types/app";
 import AnimateOnScroll from "@/components/public/AnimateOnScroll";
@@ -43,7 +44,7 @@ interface Card {
 function toCard(f: MediaFile): Card {
   return {
     id:      f.id,
-    src:     f.public_url ?? "",
+    src:     imageUrl(f.public_url ?? "", { width: 800, quality: 80 }),
     title:   f.alt_text  ?? "School News",
     caption: f.caption   ?? "",
     date:    new Date(f.created_at ?? Date.now()).toLocaleDateString("en-UG", {

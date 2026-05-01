@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
+import { imageUrl } from "@/lib/media/image-url";
 import { ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { MediaFile } from "@/types/app";
@@ -44,7 +45,7 @@ interface Slide {
 function mediaFileToSlide(f: MediaFile): Slide {
   return {
     id:          f.id,
-    src:         f.public_url ?? "",
+    src:         imageUrl(f.public_url ?? "", { width: 1920, quality: 80 }),
     title:       f.alt_text  ?? "School Life",
     description: f.caption   ?? "",
   };

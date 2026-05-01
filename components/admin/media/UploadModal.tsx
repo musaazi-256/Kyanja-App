@@ -21,6 +21,40 @@ import {
   GENERAL_IMAGE_TYPES, HERO_IMAGE_TYPES, fileAcceptList, imageTypeLabel, validateImageFile,
 } from '@/lib/media/image-rules'
 import { uploadMedia } from '@/actions/media/upload'
+
+/** Re-encodes an image as WebP at ≤1920 px wide and 82 % quality.
+ *  GIFs are skipped (animation would be destroyed by canvas). */
+async function compressImage(file: File, maxWidth = 1920, quality = 0.82): Promise<File> {
+  if (file.type === 'image/gif') return file
+  return new Promise((resolve) => {
+    const img = new window.Image()
+    const objectUrl = URL.createObjectURL(file)
+    img.onload = () => {
+      URL.revokeObjectURL(objectUrl)
+      let { width, height } = img
+      if (width > maxWidth) {
+        height = Math.round(height * (maxWidth / width))
+        width = maxWidth
+      }
+      const canvas = document.createElement('canvas')
+      canvas.width = width
+      canvas.height = height
+      const ctx = canvas.getContext('2d')
+      if (!ctx) { resolve(file); return }
+      ctx.drawImage(img, 0, 0, width, height)
+      canvas.toBlob(
+        (blob) => {
+          if (!blob || blob.size >= file.size) { resolve(file); return }
+          resolve(new File([blob], file.name.replace(/\.[^.]+$/, '.webp'), { type: 'image/webp' }))
+        },
+        'image/webp',
+        quality,
+      )
+    }
+    img.onerror = () => { URL.revokeObjectURL(objectUrl); resolve(file) }
+    img.src = objectUrl
+  })
+}
 import { uploadHeroImages } from '@/actions/settings/hero'
 import type { MediaContext as BaseMediaContext } from '@/types/app'
 
@@ -177,7 +211,7 @@ export default function UploadModal({ open, onClose, onUploaded }: Props) {
       if (uploadType === 'general') {
         if (!generalFile) return
         const fd = new FormData()
-        fd.set('file',     generalFile)
+        fd.set('file',     await compressImage(generalFile))
         fd.set('context',  context)
         // Carousel / news: use the copy-step fields; other contexts: use the optional alt-text field
         fd.set('alt_text', isSlideContext ? slideTitle : altText)
@@ -193,9 +227,9 @@ export default function UploadModal({ open, onClose, onUploaded }: Props) {
       } else {
         const fd = new FormData()
         if (desktopFile && (heroVariant === 'desktop' || heroVariant === 'both'))
-          fd.set('desktop_image', desktopFile)
+          fd.set('desktop_image', await compressImage(desktopFile))
         if (mobileFile && (heroVariant === 'mobile' || heroVariant === 'both'))
-          fd.set('mobile_image', mobileFile)
+          fd.set('mobile_image', await compressImage(mobileFile))
 
         const res = await uploadHeroImages(fd)
         if (res.success) {

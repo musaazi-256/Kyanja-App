@@ -6,7 +6,9 @@ import AnimateOnScroll from '@/components/public/AnimateOnScroll'
 
 export const metadata: Metadata = {
   title: 'Programs & Academics',
-  description: 'Explore the academic programs and extra-curricular activities at Kyanja Junior School.',
+  description:
+    'Explore nursery and primary school programs at Kyanja Junior School — English, Mathematics, Science, Arts, Music, and Sports. Quality curriculum from P1 to P7 in Kyanja, Kisaasi, Kampala, Uganda.',
+  alternates: { canonical: 'https://www.kyanjajuniorschool.com/programs' },
 }
 
 export default function ProgramsPage() {

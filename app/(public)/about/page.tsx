@@ -4,7 +4,9 @@ import AnimateOnScroll from '@/components/public/AnimateOnScroll'
 
 export const metadata: Metadata = {
   title: 'About Us',
-  description: 'Learn about Kyanja Junior School — our history, mission, and values.',
+  description:
+    'Learn about Kyanja Junior School — our history, mission, values, and dedicated teachers. A trusted nursery and primary school in Kyanja, Kisaasi, Nakawa Division, Kampala, Uganda.',
+  alternates: { canonical: 'https://www.kyanjajuniorschool.com/about' },
 }
 
 export default function AboutPage() {

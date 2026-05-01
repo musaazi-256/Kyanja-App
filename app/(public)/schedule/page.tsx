@@ -6,7 +6,9 @@ import AnimateOnScroll from '@/components/public/AnimateOnScroll'
 
 export const metadata: Metadata = {
   title: 'School Schedule',
-  description: 'View upcoming school events and the academic calendar for Kyanja Junior School.',
+  description:
+    'View the academic calendar, term dates, and upcoming events at Kyanja Junior School in Kyanja, Kisaasi, Nakawa Division, Kampala, Uganda.',
+  alternates: { canonical: 'https://www.kyanjajuniorschool.com/schedule' },
 }
 
 function formatEventDate(event: CalendarEvent): string {

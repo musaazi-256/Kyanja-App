@@ -7,7 +7,9 @@ import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'Apply for Admission',
-  description: 'Submit your child\'s application to Kyanja Junior School.',
+  description:
+    'Submit your child\'s admission application to Kyanja Junior School, Kyanja, Kisaasi, Kampala, Uganda. Simple online form — start your child\'s journey at one of Kampala\'s best primary schools.',
+  alternates: { canonical: 'https://www.kyanjajuniorschool.com/admissions/apply' },
 }
 
 interface PageProps {

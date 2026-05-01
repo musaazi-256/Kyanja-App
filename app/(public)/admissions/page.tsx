@@ -5,7 +5,9 @@ import AnimateOnScroll from '@/components/public/AnimateOnScroll'
 
 export const metadata: Metadata = {
   title: 'Admissions',
-  description: 'Apply for admission to Kyanja Junior School.',
+  description:
+    'Apply for admission to Kyanja Junior School in Kyanja, Kisaasi, Nakawa Division, Kampala, Uganda. Learn about entry requirements, fee structure, and how to enrol your child in one of Kampala\'s best primary schools.',
+  alternates: { canonical: 'https://www.kyanjajuniorschool.com/admissions' },
 }
 
 export default function AdmissionsPage() {

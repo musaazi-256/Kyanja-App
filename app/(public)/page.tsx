@@ -1,4 +1,17 @@
+import type { Metadata } from 'next'
 import HeroSection from "@/components/public/hero/HeroSection";
+
+export const metadata: Metadata = {
+  title: 'Kyanja Junior School | Best Primary School in Kyanja, Kisaasi, Kampala',
+  description:
+    'Kyanja Junior School — top-rated nursery and primary school in Kyanja, 500m from Kyanja West Mall, Kisaasi area, Nakawa Division, Kampala, Uganda. Quality education from nursery to P7. Apply for admissions now.',
+  alternates: { canonical: 'https://www.kyanjajuniorschool.com' },
+  openGraph: {
+    title:       'Kyanja Junior School | Best Primary School in Kyanja, Kisaasi, Kampala',
+    description: 'Top-rated school in Kyanja, near Kisaasi, Nakawa Division, Kampala. Nursery through P7. Apply today.',
+    url:         'https://www.kyanjajuniorschool.com',
+  },
+}
 import TrustBar from "@/components/public/trust/TrustBar";
 import ProgramsSection from "@/components/public/programs/ProgramsSection";
 import HowToApplySection from "@/components/public/admissions/HowToApplySection";

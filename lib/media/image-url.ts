@@ -11,11 +11,11 @@
  * wired to Supabase's render endpoint once the project upgrades to Pro.
  */
 export function imageUrl(
-  src: string,
+  src: string | null | undefined,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _options: { width?: number; quality?: number } = {},
 ): string {
-  if (!src || !src.includes('/storage/v1/object/public/')) return src
+  if (!src || !src.includes('/storage/v1/object/public/')) return src ?? ''
   const [base] = src.split('?')
   return base
 }

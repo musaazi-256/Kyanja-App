@@ -46,8 +46,8 @@ export default async function UsersPage() {
 
       <Card>
         <CardContent className="p-0">
-          <div className="px-4 pt-2 pb-3 border-b bg-slate-50/70">
-            <div className="flex flex-wrap items-center gap-4 text-sm">
+          <div className="px-4 pt-2 pb-0 border-b bg-slate-50/70 overflow-x-auto">
+            <div className="flex items-center text-sm min-w-max">
               {[
                 ['All', counts.all],
                 ['Active', counts.active],
@@ -55,16 +55,16 @@ export default async function UsersPage() {
                 ['Admins', counts.admin],
                 ['Staff', counts.staff],
                 ['Teachers', counts.teacher],
-              ].map(([label, count], idx, arr) => (
-                <div key={label as string} className="flex items-center gap-4">
-                  <span className="inline-flex items-center gap-2 pb-2 text-slate-700 font-medium">
-                    <span>{label}</span>
-                    <span className="inline-flex min-w-5 h-5 items-center justify-center rounded-full bg-slate-200 text-slate-600 text-xs px-1.5">
-                      {count as number}
-                    </span>
+              ].map(([label, count]) => (
+                <span
+                  key={label as string}
+                  className="inline-flex items-center gap-1.5 px-3 py-2.5 whitespace-nowrap text-slate-700 font-medium"
+                >
+                  <span>{label}</span>
+                  <span className="inline-flex min-w-5 h-5 items-center justify-center rounded-full bg-slate-200 text-slate-600 text-xs px-1.5">
+                    {count as number}
                   </span>
-                  {idx < arr.length - 1 && <span className="text-slate-300">|</span>}
-                </div>
+                </span>
               ))}
             </div>
           </div>
@@ -74,9 +74,9 @@ export default async function UsersPage() {
               <TableRow className="bg-slate-100/90 hover:bg-slate-100/90">
                 <TableHead>User</TableHead>
                 <TableHead>Role</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Last Login</TableHead>
-                <TableHead>Joined</TableHead>
+                <TableHead className="hidden sm:table-cell">Status</TableHead>
+                <TableHead className="hidden md:table-cell">Last Login</TableHead>
+                <TableHead className="hidden lg:table-cell">Joined</TableHead>
                 <TableHead className="w-12" />
               </TableRow>
             </TableHeader>
@@ -86,14 +86,14 @@ export default async function UsersPage() {
                 return (
                   <TableRow key={profile.id}>
                     <TableCell>
-                      <div className="flex items-center gap-3">
-                        <Avatar className="w-8 h-8">
+                      <div className="flex items-center gap-2 sm:gap-3">
+                        <Avatar className="w-7 h-7 sm:w-8 sm:h-8 shrink-0">
                           <AvatarImage src={profile.avatar_url ?? undefined} />
                           <AvatarFallback className="text-xs bg-blue-900 text-white">{initials}</AvatarFallback>
                         </Avatar>
-                        <div>
-                          <p className="font-medium text-sm">{profile.full_name}</p>
-                          <p className="text-xs text-slate-500">{profile.email}</p>
+                        <div className="min-w-0">
+                          <p className="font-medium text-sm truncate">{profile.full_name}</p>
+                          <p className="text-xs text-slate-500 truncate max-w-[140px] sm:max-w-none">{profile.email}</p>
                         </div>
                       </div>
                     </TableCell>
@@ -102,7 +102,7 @@ export default async function UsersPage() {
                         {profile.role}
                       </Badge>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="hidden sm:table-cell">
                       <Badge className={profile.is_active
                         ? 'bg-green-100 text-green-700 border-0'
                         : 'bg-red-100 text-red-700 border-0'
@@ -110,10 +110,10 @@ export default async function UsersPage() {
                         {profile.is_active ? 'Active' : 'Disabled'}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-slate-500 text-sm">
+                    <TableCell className="hidden md:table-cell text-slate-500 text-sm">
                       {profile.last_login_at ? format(new Date(profile.last_login_at), 'dd MMM yyyy') : '—'}
                     </TableCell>
-                    <TableCell className="text-slate-500 text-sm">
+                    <TableCell className="hidden lg:table-cell text-slate-500 text-sm">
                       {format(new Date(profile.created_at), 'dd MMM yyyy')}
                     </TableCell>
                     <TableCell>

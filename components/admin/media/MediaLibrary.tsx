@@ -99,11 +99,11 @@ export default function MediaLibrary({ initialFiles, meta }: Props) {
     <div className="space-y-5">
 
       {/* ── Toolbar: upload / search / filter / view toggle ────────── */}
-      <div className="flex flex-wrap gap-3 items-center justify-between">
-        <div className="flex flex-wrap gap-3 items-center">
+      <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:gap-3 sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:gap-3 sm:items-center">
           {/* Upload button */}
           <Button
-            className="bg-blue-900 hover:bg-blue-800 active:scale-95 transition-all gap-2"
+            className="bg-blue-900 hover:bg-blue-800 active:scale-95 transition-all gap-2 w-full sm:w-auto"
             onClick={() => setUploadOpen(true)}
           >
             <Upload className="w-4 h-4" />
@@ -126,7 +126,7 @@ export default function MediaLibrary({ initialFiles, meta }: Props) {
                 setSearchDraft(e.target.value)
                 if (e.target.value === '') updateParams({ search: undefined, page: undefined })
               }}
-              className="pl-9 w-52"
+              className="pl-9 w-full sm:w-48"
             />
           </form>
 
@@ -137,7 +137,7 @@ export default function MediaLibrary({ initialFiles, meta }: Props) {
               updateParams({ context: v === 'all' ? undefined : v, page: undefined })
             }
           >
-            <SelectTrigger className="w-40">
+            <SelectTrigger className="w-full sm:w-40">
               <SelectValue placeholder="All categories" />
             </SelectTrigger>
             <SelectContent>
@@ -154,7 +154,7 @@ export default function MediaLibrary({ initialFiles, meta }: Props) {
                 setSearchDraft('')
                 updateParams({ search: undefined, context: undefined, page: undefined })
               }}
-              className="text-sm text-slate-500 hover:text-slate-800 underline-offset-2 hover:underline"
+              className="text-sm text-slate-500 hover:text-slate-800 underline-offset-2 hover:underline self-start sm:self-auto"
             >
               Clear filters
             </button>
@@ -162,7 +162,7 @@ export default function MediaLibrary({ initialFiles, meta }: Props) {
         </div>
 
         {/* View toggle */}
-        <div className="flex rounded-md border overflow-hidden shrink-0">
+        <div className="flex rounded-md border overflow-hidden self-start sm:self-auto shrink-0">
           <button
             onClick={() => setView('grid')}
             className={`px-3 py-1.5 flex items-center gap-1.5 text-sm transition-colors ${

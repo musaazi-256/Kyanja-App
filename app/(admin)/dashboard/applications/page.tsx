@@ -52,7 +52,7 @@ export default async function ApplicationsPage({ searchParams }: PageProps) {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Applications</h1>
           <p className="text-slate-500 text-sm mt-0.5">
@@ -79,25 +79,23 @@ export default async function ApplicationsPage({ searchParams }: PageProps) {
 
       <Card>
         <CardContent className="p-0">
-          <div className="px-4 pt-2 pb-3 border-b bg-slate-50/70">
-            <div className="flex flex-wrap items-center gap-4 text-sm">
-              {statusTabs.map((tab, idx) => (
-                <div key={tab.key ?? 'all'} className="flex items-center gap-4">
-                  <Link
-                    href={tab.key ? `/dashboard/applications?status=${tab.key}` : '/dashboard/applications'}
-                    className={`inline-flex items-center gap-2 pb-2 border-b-2 transition-colors ${
-                      (tab.key ? activeStatus === tab.key : !activeStatus)
-                        ? 'text-blue-600 border-blue-600 font-medium'
-                        : 'text-slate-600 border-transparent hover:text-slate-900'
-                    }`}
-                  >
-                    <span>{tab.label}</span>
-                    <span className="inline-flex min-w-5 h-5 items-center justify-center rounded-full bg-slate-200 text-slate-600 text-xs px-1.5">
-                      {tab.count}
-                    </span>
-                  </Link>
-                  {idx < statusTabs.length - 1 && <span className="text-slate-300">|</span>}
-                </div>
+          <div className="px-4 pt-2 pb-0 border-b bg-slate-50/70 overflow-x-auto">
+            <div className="flex items-center gap-1 text-sm min-w-max">
+              {statusTabs.map((tab) => (
+                <Link
+                  key={tab.key ?? 'all'}
+                  href={tab.key ? `/dashboard/applications?status=${tab.key}` : '/dashboard/applications'}
+                  className={`inline-flex items-center gap-1.5 px-3 py-2.5 border-b-2 whitespace-nowrap transition-colors ${
+                    (tab.key ? activeStatus === tab.key : !activeStatus)
+                      ? 'text-blue-600 border-blue-600 font-medium'
+                      : 'text-slate-600 border-transparent hover:text-slate-900'
+                  }`}
+                >
+                  <span>{tab.label}</span>
+                  <span className="inline-flex min-w-5 h-5 items-center justify-center rounded-full bg-slate-200 text-slate-600 text-xs px-1.5">
+                    {tab.count}
+                  </span>
+                </Link>
               ))}
             </div>
           </div>
@@ -106,12 +104,12 @@ export default async function ApplicationsPage({ searchParams }: PageProps) {
             <TableHeader>
               <TableRow className="bg-slate-100/90 hover:bg-slate-100/90">
                 <TableHead>Student</TableHead>
-                <TableHead>Class</TableHead>
-                <TableHead>Academic Year</TableHead>
-                <TableHead>Parent</TableHead>
+                <TableHead className="hidden sm:table-cell">Class</TableHead>
+                <TableHead className="hidden md:table-cell">Academic Year</TableHead>
+                <TableHead className="hidden sm:table-cell">Parent</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>Source</TableHead>
+                <TableHead className="hidden md:table-cell">Date</TableHead>
+                <TableHead className="hidden lg:table-cell">Source</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -128,9 +126,9 @@ export default async function ApplicationsPage({ searchParams }: PageProps) {
                     <TableCell className="font-medium">
                       {app.student_first_name} {app.student_last_name}
                     </TableCell>
-                    <TableCell>{app.applying_for_class}</TableCell>
-                    <TableCell>{app.academic_year}</TableCell>
-                    <TableCell>
+                    <TableCell className="hidden sm:table-cell">{app.applying_for_class}</TableCell>
+                    <TableCell className="hidden md:table-cell">{app.academic_year}</TableCell>
+                    <TableCell className="hidden sm:table-cell">
                       <div>
                         <p className="font-medium text-sm">{app.parent_name}</p>
                         <p className="text-xs text-slate-500">{app.parent_email}</p>
@@ -139,10 +137,10 @@ export default async function ApplicationsPage({ searchParams }: PageProps) {
                     <TableCell>
                       <StatusBadge status={app.status} />
                     </TableCell>
-                    <TableCell className="text-slate-500 text-sm">
+                    <TableCell className="hidden md:table-cell text-slate-500 text-sm">
                       {format(new Date(app.created_at), 'dd MMM yyyy')}
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="hidden lg:table-cell">
                       <Badge variant="outline" className="text-xs capitalize">
                         {app.source.replace('_', ' ')}
                       </Badge>

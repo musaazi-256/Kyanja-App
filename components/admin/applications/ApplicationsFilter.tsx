@@ -53,13 +53,13 @@ export default function ApplicationsFilter({ academicYears }: { academicYears: s
     searchParams.has('search')
 
   return (
-    <div className="flex flex-wrap gap-3 items-center">
-      <form onSubmit={handleSearchSubmit} className="flex gap-2">
-        <div className="relative">
+    <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:gap-3 sm:items-center">
+      <form onSubmit={handleSearchSubmit} className="flex gap-2 w-full sm:w-auto">
+        <div className="relative flex-1 sm:flex-none">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <Input
             placeholder="Search name, email…"
-            className="pl-9 w-64"
+            className="pl-9 w-full sm:w-56"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -71,7 +71,7 @@ export default function ApplicationsFilter({ academicYears }: { academicYears: s
         value={searchParams.get('status') ?? 'all'}
         onValueChange={(v) => updateParam('status', v)}
       >
-        <SelectTrigger className="w-40">
+        <SelectTrigger className="w-full sm:w-36">
           <SelectValue placeholder="All statuses" />
         </SelectTrigger>
         <SelectContent>
@@ -87,7 +87,7 @@ export default function ApplicationsFilter({ academicYears }: { academicYears: s
           value={searchParams.get('academic_year') ?? 'all'}
           onValueChange={(v) => updateParam('academic_year', v)}
         >
-          <SelectTrigger className="w-36">
+          <SelectTrigger className="w-full sm:w-32">
             <SelectValue placeholder="All years" />
           </SelectTrigger>
           <SelectContent>
@@ -100,7 +100,7 @@ export default function ApplicationsFilter({ academicYears }: { academicYears: s
       )}
 
       {hasFilters && (
-        <Button variant="ghost" size="sm" onClick={clearAll} className="text-slate-500">
+        <Button variant="ghost" size="sm" onClick={clearAll} className="text-slate-500 self-start sm:self-auto">
           <X className="w-4 h-4 mr-1" />
           Clear filters
         </Button>

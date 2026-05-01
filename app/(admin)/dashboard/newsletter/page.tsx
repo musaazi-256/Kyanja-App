@@ -82,25 +82,23 @@ export default async function NewsletterPage({
       <Card>
         <CardHeader><CardTitle className="text-base">Newsletter History</CardTitle></CardHeader>
         <CardContent className="p-0">
-          <div className="px-4 pt-2 pb-3 border-b bg-slate-50/70">
-            <div className="flex flex-wrap items-center gap-4 text-sm">
-              {FILTERS.map((f, idx) => (
-                <div key={f.key} className="flex items-center gap-4">
-                  <Link
-                    href={f.key === 'all' ? '/dashboard/newsletter' : `/dashboard/newsletter?status=${f.key}`}
-                    className={`inline-flex items-center gap-2 pb-2 border-b-2 transition-colors ${
-                      activeFilter === f.key
-                        ? 'text-blue-600 border-blue-600 font-medium'
-                        : 'text-slate-600 border-transparent hover:text-slate-900'
-                    }`}
-                  >
-                    <span>{f.label}</span>
-                    <span className="inline-flex min-w-5 h-5 items-center justify-center rounded-full bg-slate-200 text-slate-600 text-xs px-1.5">
-                      {counts[f.key]}
-                    </span>
-                  </Link>
-                  {idx < FILTERS.length - 1 && <span className="text-slate-300">|</span>}
-                </div>
+          <div className="px-4 pt-2 pb-0 border-b bg-slate-50/70 overflow-x-auto">
+            <div className="flex items-center text-sm min-w-max">
+              {FILTERS.map((f) => (
+                <Link
+                  key={f.key}
+                  href={f.key === 'all' ? '/dashboard/newsletter' : `/dashboard/newsletter?status=${f.key}`}
+                  className={`inline-flex items-center gap-1.5 px-3 py-2.5 border-b-2 whitespace-nowrap transition-colors ${
+                    activeFilter === f.key
+                      ? 'text-blue-600 border-blue-600 font-medium'
+                      : 'text-slate-600 border-transparent hover:text-slate-900'
+                  }`}
+                >
+                  <span>{f.label}</span>
+                  <span className="inline-flex min-w-5 h-5 items-center justify-center rounded-full bg-slate-200 text-slate-600 text-xs px-1.5">
+                    {counts[f.key]}
+                  </span>
+                </Link>
               ))}
             </div>
           </div>
@@ -110,10 +108,10 @@ export default async function NewsletterPage({
               <TableRow className="bg-slate-100/90 hover:bg-slate-100/90">
                 <TableHead>Subject</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead>Recipients</TableHead>
-                <TableHead>Sent</TableHead>
-                <TableHead>Failed</TableHead>
-                <TableHead>Date</TableHead>
+                <TableHead className="hidden sm:table-cell">Recipients</TableHead>
+                <TableHead className="hidden sm:table-cell">Sent</TableHead>
+                <TableHead className="hidden sm:table-cell">Failed</TableHead>
+                <TableHead className="hidden md:table-cell">Date</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -127,7 +125,7 @@ export default async function NewsletterPage({
               ) : (
                 filtered.map((nl) => (
                   <TableRow key={nl.id}>
-                    <TableCell className="font-medium max-w-xs truncate">
+                    <TableCell className="font-medium max-w-[160px] sm:max-w-xs truncate">
                       <Link
                         href={`/dashboard/newsletter/${nl.id}`}
                         className="hover:underline hover:text-blue-600 transition-colors"
@@ -140,12 +138,12 @@ export default async function NewsletterPage({
                         {nl.status}
                       </Badge>
                     </TableCell>
-                    <TableCell>{nl.recipient_count}</TableCell>
-                    <TableCell>{nl.sent_count}</TableCell>
-                    <TableCell className={nl.failed_count > 0 ? 'text-red-600' : ''}>
+                    <TableCell className="hidden sm:table-cell">{nl.recipient_count}</TableCell>
+                    <TableCell className="hidden sm:table-cell">{nl.sent_count}</TableCell>
+                    <TableCell className={`hidden sm:table-cell ${nl.failed_count > 0 ? 'text-red-600' : ''}`}>
                       {nl.failed_count}
                     </TableCell>
-                    <TableCell className="text-slate-500 text-sm">
+                    <TableCell className="hidden md:table-cell text-slate-500 text-sm">
                       {format(new Date(nl.created_at), 'dd MMM yyyy')}
                     </TableCell>
                     <TableCell className="text-right">

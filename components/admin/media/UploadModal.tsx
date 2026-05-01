@@ -1,10 +1,10 @@
 'use client'
 
-import { useRef, useState, useTransition } from 'react'
+import { useRef, useState } from 'react'
 import { toast } from 'sonner'
 import {
   Upload, Loader2, ImageIcon, Monitor, Smartphone, Layers,
-  GalleryHorizontal, ChevronLeft, Newspaper,
+  GalleryHorizontal, ChevronLeft, Newspaper, X,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -21,7 +21,10 @@ import {
   GENERAL_IMAGE_TYPES, HERO_IMAGE_TYPES, fileAcceptList, imageTypeLabel, validateImageFile,
 } from '@/lib/media/image-rules'
 import { uploadMedia } from '@/actions/media/upload'
+import { uploadHeroImages } from '@/actions/settings/hero'
+import type { MediaContext as BaseMediaContext } from '@/types/app'
 
+// ── Image compression ──────────────────────────────────────────────────────────
 /** Re-encodes an image as WebP at ≤1920 px wide and 82 % quality.
  *  GIFs are skipped (animation would be destroyed by canvas). */
 async function compressImage(file: File, maxWidth = 1920, quality = 0.82): Promise<File> {
@@ -55,18 +58,15 @@ async function compressImage(file: File, maxWidth = 1920, quality = 0.82): Promi
     img.src = objectUrl
   })
 }
-import { uploadHeroImages } from '@/actions/settings/hero'
-import type { MediaContext as BaseMediaContext } from '@/types/app'
 
-// ── Types ─────────────────────────────────────────────────────────────────────
-// Extend the DB-generated enum with 'carousel' (added via migration 010;
-// Supabase generated types will pick it up after the next type regeneration).
+// ── Types ──────────────────────────────────────────────────────────────────────
 type MediaContext = BaseMediaContext | 'carousel'
-
 type UploadType  = 'general' | 'hero'
 type HeroVariant = 'desktop' | 'mobile' | 'both'
-// Carousel and News uploads have a mandatory 2-step flow: 'form' → file/category, 'copy' → headline+desc
-type Step = 'form' | 'copy'
+type Step        = 'form' | 'copy'
+
+// Contexts that allow selecting multiple files at once
+const MULTI_CONTEXTS: MediaContext[] = ['gallery', 'admissions', 'page_content']
 
 const CONTEXTS: { value: MediaContext; label: string }[] = [
   { value: 'carousel',     label: 'Carousel' },
@@ -83,7 +83,6 @@ const HERO_VARIANTS: { value: HeroVariant; label: string; icon: React.ComponentT
   { value: 'both',    label: 'Both',    icon: Layers     },
 ]
 
-// Size specifications shown per context
 const CONTEXT_SPECS: Partial<Record<MediaContext, { size: string; ratio: string; tip: string }>> = {
   carousel: {
     size:  '1920 × 1080 px',
@@ -97,42 +96,73 @@ const CONTEXT_SPECS: Partial<Record<MediaContext, { size: string; ratio: string;
   },
 }
 
-// ── File drop zone ─────────────────────────────────────────────────────────────
+// ── Drop zone ──────────────────────────────────────────────────────────────────
 interface DropZoneProps {
-  file: File | null
+  files: File[]
   inputRef: React.RefObject<HTMLInputElement | null>
   accept: string
+  multiple?: boolean
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  onRemove?: (index: number) => void
   hint?: string
 }
 
-function DropZone({ file, inputRef, accept, onChange, hint }: DropZoneProps) {
-  const fileTypeLabel = file?.type.split('/')[1]?.toUpperCase() ?? 'FILE'
+function DropZone({ files, inputRef, accept, multiple, onChange, onRemove, hint }: DropZoneProps) {
+  const hasFiles = files.length > 0
 
   return (
-    <div className="space-y-1">
-      <input ref={inputRef} type="file" accept={accept} className="hidden" onChange={onChange} />
+    <div className="space-y-2">
+      <input
+        ref={inputRef}
+        type="file"
+        accept={accept}
+        multiple={multiple}
+        className="hidden"
+        onChange={onChange}
+      />
       <button
         type="button"
         onClick={() => inputRef.current?.click()}
-        className="w-full rounded-xl border-2 border-dashed border-slate-200 bg-slate-50 py-7 text-center hover:border-blue-900/40 hover:bg-blue-50/30 transition-colors"
+        className="w-full rounded-xl border-2 border-dashed border-slate-200 bg-slate-50 py-6 text-center hover:border-blue-900/40 hover:bg-blue-50/30 transition-colors"
       >
-        {file ? (
+        {hasFiles && !multiple ? (
           <div className="text-sm">
-            <p className="font-medium text-slate-700">{file.name}</p>
+            <p className="font-medium text-slate-700">{files[0].name}</p>
             <p className="text-slate-400 mt-0.5 text-xs">
-              {(file.size / 1024 / 1024).toFixed(2)} MB · {fileTypeLabel}
+              {(files[0].size / 1024 / 1024).toFixed(2)} MB · {files[0].type.split('/')[1]?.toUpperCase()}
             </p>
             <p className="text-blue-900 text-xs mt-1.5 underline underline-offset-2">Click to replace</p>
           </div>
         ) : (
           <div className="text-slate-400">
             <Upload className="w-6 h-6 mx-auto mb-2" />
-            <p className="text-sm">Click to choose a file</p>
+            <p className="text-sm font-medium">
+              {hasFiles ? 'Click to add more images' : multiple ? 'Click to choose images' : 'Click to choose a file'}
+            </p>
             {hint && <p className="text-xs mt-1 text-slate-300">{hint}</p>}
           </div>
         )}
       </button>
+
+      {/* File list — only shown for multi-select */}
+      {multiple && hasFiles && (
+        <ul className="space-y-1.5 max-h-44 overflow-y-auto pr-0.5">
+          {files.map((f, i) => (
+            <li key={i} className="flex items-center gap-2 rounded-lg bg-slate-50 border border-slate-100 px-3 py-2">
+              <span className="flex-1 truncate text-xs font-medium text-slate-700">{f.name}</span>
+              <span className="text-xs text-slate-400 shrink-0">{(f.size / 1024 / 1024).toFixed(1)} MB</span>
+              <button
+                type="button"
+                onClick={() => onRemove?.(i)}
+                className="shrink-0 text-slate-400 hover:text-red-500 transition-colors"
+                aria-label={`Remove ${f.name}`}
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   )
 }
@@ -145,18 +175,19 @@ interface Props {
 }
 
 export default function UploadModal({ open, onClose, onUploaded }: Props) {
-  const [pending, startTransition] = useTransition()
+  const [pending,  setPending]  = useState(false)
+  const [progress, setProgress] = useState<{ done: number; total: number } | null>(null)
 
   const [step,       setStep]       = useState<Step>('form')
   const [uploadType, setUploadType] = useState<UploadType>('general')
 
   // General media state
-  const [context,     setContext]     = useState<MediaContext>('carousel')
-  const [altText,     setAltText]     = useState('')
-  const [generalFile, setGeneralFile] = useState<File | null>(null)
+  const [context,      setContext]      = useState<MediaContext>('carousel')
+  const [altText,      setAltText]      = useState('')
+  const [generalFiles, setGeneralFiles] = useState<File[]>([])
   const generalRef = useRef<HTMLInputElement>(null)
 
-  // Slide copy fields — used for both carousel and news (step 2, both required)
+  // Slide copy fields
   const [slideTitle, setSlideTitle] = useState('')
   const [slideDesc,  setSlideDesc]  = useState('')
 
@@ -172,12 +203,13 @@ export default function UploadModal({ open, onClose, onUploaded }: Props) {
     setUploadType('general')
     setContext('carousel')
     setAltText('')
-    setGeneralFile(null)
+    setGeneralFiles([])
     setSlideTitle('')
     setSlideDesc('')
     setHeroVariant('desktop')
     setDesktopFile(null)
     setMobileFile(null)
+    setProgress(null)
     if (generalRef.current) generalRef.current.value = ''
     if (desktopRef.current) desktopRef.current.value = ''
     if (mobileRef.current)  mobileRef.current.value  = ''
@@ -189,42 +221,102 @@ export default function UploadModal({ open, onClose, onUploaded }: Props) {
     onClose()
   }
 
-  // Carousel and News both get the mandatory 2-step copy flow
-  const isSlideContext = uploadType === 'general' && (context === 'carousel' || context === 'news')
+  const isSlideContext  = uploadType === 'general' && (context === 'carousel' || context === 'news')
+  const isMultiContext  = uploadType === 'general' && MULTI_CONTEXTS.includes(context as MediaContext)
+  const isMultiUpload   = isMultiContext && generalFiles.length > 1
 
   const formReady = uploadType === 'general'
-    ? !!generalFile
+    ? generalFiles.length > 0
     : heroVariant === 'desktop' ? !!desktopFile
     : heroVariant === 'mobile'  ? !!mobileFile
     : !!(desktopFile || mobileFile)
 
   const copyReady = slideTitle.trim().length > 0 && slideDesc.trim().length > 0
 
-  function handlePrimary() {
-    // For carousel / news uploads, the first click goes to the copy step
+  function handleGeneralFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const incoming = Array.from(e.target.files ?? [])
+    if (!incoming.length) return
+
+    const valid: File[] = []
+    for (const f of incoming) {
+      const error = validateImageFile(f, GENERAL_IMAGE_TYPES)
+      if (error) { toast.error(`${f.name}: ${error}`); continue }
+      valid.push(f)
+    }
+
+    if (isMultiContext) {
+      // Accumulate — deduplicate by name+size
+      setGeneralFiles(prev => {
+        const existing = new Set(prev.map(f => `${f.name}-${f.size}`))
+        const fresh = valid.filter(f => !existing.has(`${f.name}-${f.size}`))
+        return [...prev, ...fresh]
+      })
+    } else {
+      setGeneralFiles(valid.slice(0, 1))
+    }
+
+    // Reset the input so the same file can be re-added after removal
+    if (generalRef.current) generalRef.current.value = ''
+  }
+
+  function removeFile(index: number) {
+    setGeneralFiles(prev => prev.filter((_, i) => i !== index))
+  }
+
+  async function handlePrimary() {
     if (step === 'form' && isSlideContext) {
       setStep('copy')
       return
     }
 
-    startTransition(async () => {
+    setPending(true)
+    try {
       if (uploadType === 'general') {
-        if (!generalFile) return
-        const fd = new FormData()
-        fd.set('file',     await compressImage(generalFile))
-        fd.set('context',  context)
-        // Carousel / news: use the copy-step fields; other contexts: use the optional alt-text field
-        fd.set('alt_text', isSlideContext ? slideTitle : altText)
-        if (isSlideContext) fd.set('caption', slideDesc)
+        if (generalFiles.length === 0) return
 
-        const res = await uploadMedia(fd)
-        if (res.success) {
-          toast.success('Image uploaded')
-          reset(); onUploaded(); onClose()
+        if (isMultiUpload) {
+          // ── Multi-file upload ──────────────────────────────────────
+          const total = generalFiles.length
+          let failed = 0
+
+          for (let i = 0; i < generalFiles.length; i++) {
+            setProgress({ done: i, total })
+            const compressed = await compressImage(generalFiles[i])
+            const fd = new FormData()
+            fd.set('file',     compressed)
+            fd.set('context',  context)
+            fd.set('alt_text', altText || generalFiles[i].name.replace(/\.[^.]+$/, ''))
+            const res = await uploadMedia(fd)
+            if (!res.success) failed++
+          }
+
+          setProgress(null)
+          if (failed === 0) {
+            toast.success(`${total} image${total > 1 ? 's' : ''} uploaded`)
+          } else {
+            toast.warning(`${total - failed} of ${total} uploaded — ${failed} failed`)
+          }
         } else {
-          toast.error(res.error)
+          // ── Single-file upload ─────────────────────────────────────
+          const fd = new FormData()
+          fd.set('file',     await compressImage(generalFiles[0]))
+          fd.set('context',  context)
+          fd.set('alt_text', isSlideContext ? slideTitle : altText)
+          if (isSlideContext) fd.set('caption', slideDesc)
+
+          const res = await uploadMedia(fd)
+          if (res.success) {
+            toast.success('Image uploaded')
+          } else {
+            toast.error(res.error)
+            return
+          }
         }
+
+        reset(); onUploaded(); onClose()
+
       } else {
+        // ── Hero upload ────────────────────────────────────────────────
         const fd = new FormData()
         if (desktopFile && (heroVariant === 'desktop' || heroVariant === 'both'))
           fd.set('desktop_image', await compressImage(desktopFile))
@@ -239,16 +331,24 @@ export default function UploadModal({ open, onClose, onUploaded }: Props) {
           toast.error(res.error)
         }
       }
-    })
+    } finally {
+      setPending(false)
+    }
   }
 
-  const primaryLabel = step === 'form' && isSlideContext ? 'Next: Add Copy' : 'Upload'
+  const primaryLabel = progress
+    ? `Uploading ${progress.done + 1} of ${progress.total}…`
+    : step === 'form' && isSlideContext
+      ? 'Next: Add Copy'
+      : isMultiUpload
+        ? `Upload ${generalFiles.length} Images`
+        : 'Upload'
+
   const primaryReady = step === 'copy' ? copyReady : formReady
   const showDesktop  = uploadType === 'hero' && (heroVariant === 'desktop' || heroVariant === 'both')
   const showMobile   = uploadType === 'hero' && (heroVariant === 'mobile'  || heroVariant === 'both')
-
-  const contextSpec = CONTEXT_SPECS[context]
-  const isNews      = context === 'news'
+  const contextSpec  = CONTEXT_SPECS[context]
+  const isNews       = context === 'news'
 
   return (
     <Dialog open={open} onOpenChange={(o) => { if (!o) handleClose() }}>
@@ -299,7 +399,7 @@ export default function UploadModal({ open, onClose, onUploaded }: Props) {
                 <div className="space-y-4">
                   <div className="space-y-1.5">
                     <Label>Category</Label>
-                    <Select value={context} onValueChange={(v) => setContext(v as MediaContext)}>
+                    <Select value={context} onValueChange={(v) => { setContext(v as MediaContext); setGeneralFiles([]) }}>
                       <SelectTrigger><SelectValue /></SelectTrigger>
                       <SelectContent>
                         {CONTEXTS.map((c) => (
@@ -308,7 +408,6 @@ export default function UploadModal({ open, onClose, onUploaded }: Props) {
                       </SelectContent>
                     </Select>
 
-                    {/* Size spec + next-step notice for carousel & news */}
                     {contextSpec && (
                       <div className="rounded-lg border border-blue-100 bg-blue-50 px-3 py-2.5 space-y-1">
                         <div className="flex items-center gap-1.5">
@@ -325,12 +424,20 @@ export default function UploadModal({ open, onClose, onUploaded }: Props) {
                         </p>
                       </div>
                     )}
+
+                    {/* Multi-upload hint */}
+                    {isMultiContext && (
+                      <p className="text-xs text-slate-400 flex items-center gap-1">
+                        <Upload className="w-3 h-3" />
+                        You can select multiple images at once for this category.
+                      </p>
+                    )}
                   </div>
 
                   {!isSlideContext && (
                     <div className="space-y-1.5">
                       <Label htmlFor="alt-text">
-                        Alt text <span className="text-slate-400 font-normal">(optional)</span>
+                        Alt text <span className="text-slate-400 font-normal">(optional{isMultiContext ? ' — applied to all' : ''})</span>
                       </Label>
                       <Input
                         id="alt-text"
@@ -342,28 +449,17 @@ export default function UploadModal({ open, onClose, onUploaded }: Props) {
                   )}
 
                   <div className="space-y-1.5">
-                    <Label>File</Label>
+                    <Label>
+                      {isMultiContext ? `Files${generalFiles.length > 0 ? ` (${generalFiles.length} selected)` : ''}` : 'File'}
+                    </Label>
                     <DropZone
-                      file={generalFile}
+                      files={generalFiles}
                       inputRef={generalRef}
                       accept={fileAcceptList(GENERAL_IMAGE_TYPES)}
-                      onChange={(e) => {
-                        const f = e.target.files?.[0] ?? null
-                        if (!f) {
-                          setGeneralFile(null)
-                          return
-                        }
-
-                        const error = validateImageFile(f, GENERAL_IMAGE_TYPES)
-                        if (error) {
-                          toast.error(error)
-                          setGeneralFile(null)
-                          if (generalRef.current) generalRef.current.value = ''
-                          return
-                        }
-                        setGeneralFile(f)
-                      }}
-                      hint={`${imageTypeLabel(GENERAL_IMAGE_TYPES)} · Max 3 MB`}
+                      multiple={isMultiContext}
+                      onChange={handleGeneralFileChange}
+                      onRemove={removeFile}
+                      hint={`${imageTypeLabel(GENERAL_IMAGE_TYPES)} · Max 3 MB each`}
                     />
                   </div>
                 </div>
@@ -399,22 +495,14 @@ export default function UploadModal({ open, onClose, onUploaded }: Props) {
                       </Label>
                       <p className="text-xs text-slate-400 -mt-1">1920 × 1440 px (4:3) · Landscape · Centre your subject</p>
                       <DropZone
-                        file={desktopFile}
+                        files={desktopFile ? [desktopFile] : []}
                         inputRef={desktopRef}
                         accept={fileAcceptList(HERO_IMAGE_TYPES)}
                         onChange={(e) => {
                           const f = e.target.files?.[0] ?? null
-                          if (!f) {
-                            setDesktopFile(null)
-                            return
-                          }
+                          if (!f) { setDesktopFile(null); return }
                           const error = validateImageFile(f, HERO_IMAGE_TYPES)
-                          if (error) {
-                            toast.error(error)
-                            setDesktopFile(null)
-                            if (desktopRef.current) desktopRef.current.value = ''
-                            return
-                          }
+                          if (error) { toast.error(error); setDesktopFile(null); if (desktopRef.current) desktopRef.current.value = ''; return }
                           setDesktopFile(f)
                         }}
                         hint="Click to choose desktop image"
@@ -429,22 +517,14 @@ export default function UploadModal({ open, onClose, onUploaded }: Props) {
                       </Label>
                       <p className="text-xs text-slate-400 -mt-1">1080 × 1350 px (4:5) · Portrait · Keep subject upper-centre</p>
                       <DropZone
-                        file={mobileFile}
+                        files={mobileFile ? [mobileFile] : []}
                         inputRef={mobileRef}
                         accept={fileAcceptList(HERO_IMAGE_TYPES)}
                         onChange={(e) => {
                           const f = e.target.files?.[0] ?? null
-                          if (!f) {
-                            setMobileFile(null)
-                            return
-                          }
+                          if (!f) { setMobileFile(null); return }
                           const error = validateImageFile(f, HERO_IMAGE_TYPES)
-                          if (error) {
-                            toast.error(error)
-                            setMobileFile(null)
-                            if (mobileRef.current) mobileRef.current.value = ''
-                            return
-                          }
+                          if (error) { toast.error(error); setMobileFile(null); if (mobileRef.current) mobileRef.current.value = ''; return }
                           setMobileFile(f)
                         }}
                         hint="Click to choose mobile image"
@@ -460,15 +540,15 @@ export default function UploadModal({ open, onClose, onUploaded }: Props) {
             </>
           )}
 
-          {/* ── Step 2: Slide copy (carousel & news — mandatory) ──────── */}
+          {/* ── Step 2: Slide copy ────────────────────────────────────── */}
           {step === 'copy' && (
             <div className="space-y-4">
-              {generalFile && (
+              {generalFiles[0] && (
                 <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-50 border border-slate-100 text-xs text-slate-500">
                   {isNews
                     ? <Newspaper className="w-3.5 h-3.5 text-blue-500 shrink-0" />
                     : <GalleryHorizontal className="w-3.5 h-3.5 text-blue-500 shrink-0" />}
-                  <span className="truncate font-medium">{generalFile.name}</span>
+                  <span className="truncate font-medium">{generalFiles[0].name}</span>
                 </div>
               )}
 
@@ -484,9 +564,7 @@ export default function UploadModal({ open, onClose, onUploaded }: Props) {
                   autoFocus
                 />
                 <p className="text-xs text-slate-400">
-                  {isNews
-                    ? 'Main headline shown over the news image.'
-                    : 'Large title overlaid on the carousel slide.'}
+                  {isNews ? 'Main headline shown over the news image.' : 'Large title overlaid on the carousel slide.'}
                 </p>
               </div>
 
@@ -525,7 +603,7 @@ export default function UploadModal({ open, onClose, onUploaded }: Props) {
             disabled={pending || !primaryReady}
           >
             {pending && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
-            {pending ? 'Uploading…' : primaryLabel}
+            {primaryLabel}
           </Button>
         </DialogFooter>
       </DialogContent>

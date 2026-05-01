@@ -1,22 +1,21 @@
 /**
- * Converts a Supabase public storage URL to the render/image endpoint
- * which serves on-the-fly resized and quality-compressed images via CDN.
+ * Returns a clean Supabase storage URL, stripping any stale query params
+ * (e.g. the old ?width=1200 or ?t=timestamp cache-busters).
  *
- * Non-Supabase URLs (Unsplash, ibb.co, etc.) are returned unchanged so
- * the helper is safe to call on any image src.
+ * next/image handles all resizing, WebP conversion, and caching on its own,
+ * so no server-side transform endpoint is needed. Non-Supabase URLs
+ * (Unsplash, ibb.co, etc.) are returned unchanged.
+ *
+ * The width/quality parameters are accepted but intentionally unused —
+ * they serve as documentation of the intended display size and can be
+ * wired to Supabase's render endpoint once the project upgrades to Pro.
  */
 export function imageUrl(
   src: string,
-  { width, quality = 80 }: { width?: number; quality?: number } = {},
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _options: { width?: number; quality?: number } = {},
 ): string {
   if (!src || !src.includes('/storage/v1/object/public/')) return src
   const [base] = src.split('?')
-  const renderBase = base.replace(
-    '/storage/v1/object/public/',
-    '/storage/v1/render/image/public/',
-  )
-  const params = new URLSearchParams()
-  if (width) params.set('width', String(width))
-  params.set('quality', String(quality))
-  return `${renderBase}?${params}`
+  return base
 }

@@ -65,6 +65,7 @@ function NewsCard({ src, title, caption, date }: Omit<Card, "id">) {
           src={src}
           alt={title}
           fill
+          quality={80}
           className="object-cover transition-transform duration-500 group-hover:scale-105"
           sizes="(max-width: 768px) 100vw, 33vw"
           unoptimized={src.startsWith("https://images.unsplash")}

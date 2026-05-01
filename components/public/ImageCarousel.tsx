@@ -193,6 +193,7 @@ export default function ImageCarousel({ slides: dbSlides }: Props) {
                 src={slide.src}
                 alt={slide.title}
                 fill
+                quality={80}
                 className="object-cover"
                 sizes="(max-width: 1200px) 100vw, 1200px"
                 priority={index === 0}

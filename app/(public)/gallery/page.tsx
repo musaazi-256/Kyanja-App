@@ -61,10 +61,11 @@ export default async function GalleryPage() {
               {images.map((img) => (
                 <div key={img.id} className="break-inside-avoid rounded-xl overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group bg-white border border-slate-100 relative">
                   <Image
-                    src={imageUrl(img.public_url, { width: 900, quality: 82 })}
+                    src={imageUrl(img.public_url)}
                     alt={img.alt_text ?? img.file_name}
                     width={900}
                     height={600}
+                    quality={82}
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                     className="w-full h-auto block group-hover:scale-105 transition-transform duration-700"
                   />

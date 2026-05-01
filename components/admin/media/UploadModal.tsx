@@ -459,7 +459,7 @@ export default function UploadModal({ open, onClose, onUploaded }: Props) {
                       multiple={isMultiContext}
                       onChange={handleGeneralFileChange}
                       onRemove={removeFile}
-                      hint={`${imageTypeLabel(GENERAL_IMAGE_TYPES)} · Max 3 MB each`}
+                      hint={`${imageTypeLabel(GENERAL_IMAGE_TYPES)} · Max 20 MB · compressed automatically`}
                     />
                   </div>
                 </div>
@@ -533,7 +533,7 @@ export default function UploadModal({ open, onClose, onUploaded }: Props) {
                   )}
 
                   <p className="text-xs text-slate-400 pt-1">
-                    Accepted: {imageTypeLabel(HERO_IMAGE_TYPES)} &nbsp;·&nbsp; Max 3 MB per image
+                    Accepted: {imageTypeLabel(HERO_IMAGE_TYPES)} &nbsp;·&nbsp; Max 20 MB · compressed automatically
                   </p>
                 </div>
               )}

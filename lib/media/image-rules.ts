@@ -1,4 +1,4 @@
-export const MAX_IMAGE_BYTES = 3 * 1024 * 1024
+export const MAX_IMAGE_BYTES = 20 * 1024 * 1024
 
 export const GENERAL_IMAGE_TYPES = [
   'image/jpeg',
@@ -31,6 +31,6 @@ export function validateImageFile(
   if (!allowedTypes.includes(file.type)) {
     return `Only ${imageTypeLabel(allowedTypes)} images are accepted`
   }
-  if (file.size > maxBytes) return 'Image must be under 3 MB'
+  if (file.size > maxBytes) return 'Image must be under 20 MB'
   return null
 }

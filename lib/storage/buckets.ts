@@ -15,7 +15,7 @@ export const PUBLIC_BUCKETS: BucketName[] = [BUCKETS.GALLERY, BUCKETS.MEDIA, BUC
 
 /** Max sizes in bytes */
 export const MAX_FILE_SIZES: Record<BucketName, number> = {
-  gallery:   MAX_IMAGE_BYTES,   // 3 MB
+  gallery:   MAX_IMAGE_BYTES,   // 20 MB (compressed to WebP before upload)
   media:     MAX_IMAGE_BYTES,
   documents: 50 * 1024 * 1024,  // 50 MB
   avatars:   2 * 1024 * 1024,   // 2 MB

@@ -124,14 +124,14 @@ export default function HeroSection({ slides }: Props) {
         </div>
       ))}
 
-      {/* Gradient overlay */}
+      {/* Gradient overlay — bottom-weighted so text is always legible */}
       <div
         aria-hidden
         className="absolute inset-0 pointer-events-none"
         style={{
           zIndex: 2,
           background:
-            "linear-gradient(160deg, rgba(0,0,30,0.28) 0%, rgba(0,0,30,0.04) 36%, rgba(0,0,30,0.62) 64%, rgba(0,0,30,0.92) 100%)",
+            "linear-gradient(to top, rgba(0,0,30,0.92) 0%, rgba(0,0,30,0.65) 28%, rgba(0,0,30,0.25) 55%, rgba(0,0,30,0.18) 100%)",
         }}
       />
 
@@ -140,26 +140,16 @@ export default function HeroSection({ slides }: Props) {
         className="absolute inset-0 flex flex-col justify-end"
         style={{ zIndex: 10, padding: "0 clamp(24px,5vw,64px) clamp(120px,14vh,150px)" }}
       >
-        {/* Eyebrow */}
-        <div
-          className="flex items-center gap-3 mb-3"
-          style={{ animation: "hero-up 0.65s 0.1s ease both" }}
-        >
-          <div style={{ width: 28, height: 2, flexShrink: 0, backgroundColor: "var(--brand-gold)" }} />
-          <span className="text-[10px] font-bold uppercase tracking-[4px]" style={{ color: "var(--brand-gold)" }}>
-            Nursery &nbsp;·&nbsp; Primary &nbsp;·&nbsp; Kyanja, Kampala
-          </span>
-        </div>
-
         {/* Motto */}
         <p
           className="mb-5 italic"
           style={{
             fontFamily: "var(--font-serif)",
-            fontSize: "clamp(0.9rem,1.5vw,1.15rem)",
-            color: "rgba(255,255,255,0.55)",
-            letterSpacing: "0.02em",
-            animation: "hero-up 0.65s 0.2s ease both",
+            fontSize: "clamp(1.05rem,1.8vw,1.35rem)",
+            color: "var(--brand-gold)",
+            letterSpacing: "0.04em",
+            animation: "hero-up 0.65s 0.1s ease both",
+            textShadow: "0 1px 10px rgba(0,0,0,0.7)",
           }}
         >
           &ldquo;Education is a Treasure&rdquo;
@@ -174,6 +164,7 @@ export default function HeroSection({ slides }: Props) {
             letterSpacing: "-1.5px",
             maxWidth: 820,
             animation: "hero-up 0.65s 0.3s ease both",
+            textShadow: "0 2px 16px rgba(0,0,0,0.55), 0 1px 4px rgba(0,0,0,0.4)",
           }}
         >
           Where Every Child<br />
@@ -195,8 +186,9 @@ export default function HeroSection({ slides }: Props) {
           className="font-light leading-relaxed mb-8 max-w-[480px]"
           style={{
             fontSize: "clamp(0.875rem,1.3vw,1rem)",
-            color: "rgba(255,255,255,0.68)",
+            color: "rgba(255,255,255,0.88)",
             animation: "hero-up 0.65s 0.44s ease both",
+            textShadow: "0 1px 8px rgba(0,0,0,0.6)",
           }}
         >
           A community of learners, thinkers, and future leaders —

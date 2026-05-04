@@ -12,53 +12,179 @@ jobs:
     steps:
       - name: Send deployment notification
         env:
-          DEPLOY_HOOK_TOKEN: ${{ secrets.DEPLOY_HOOK_TOKEN }}
-          COMMIT_MSG:    ${{ github.event.head_commit.message }}
-          COMMIT_AUTHOR: ${{ github.event.head_commit.author.name }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
         run: |
           SHORT_SHA="${{ github.sha }}"
           SHORT_SHA="${SHORT_SHA:0:7}"
-          NOW_MS=$(date +%s%3N)
+          COMMIT_MSG="${{ github.event.head_commit.message }}"
+          COMMIT_AUTHOR="${{ github.event.head_commit.author.name }}"
           COMMIT_URL="https://github.com/${{ github.repository }}/commit/${{ github.sha }}"
+          RUN_URL="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          DEPLOY_DATE=$(date -u '+%d %b %Y · %H:%M UTC')
+
+          # Derive badge label from conventional commit prefix
+          PREFIX=$(echo "$COMMIT_MSG" | grep -oP '^(feat|fix|perf|style|refactor|docs|chore|test|revert)' || echo "update")
+          case "$PREFIX" in
+            feat)     BADGE="New Feature";      BADGE_BG="#16a34a"; BADGE_FG="#ffffff" ;;
+            fix)      BADGE="Bug Fix";          BADGE_BG="#dc2626"; BADGE_FG="#ffffff" ;;
+            perf)     BADGE="Performance";      BADGE_BG="#7c3aed"; BADGE_FG="#ffffff" ;;
+            style)    BADGE="Styling";          BADGE_BG="#0284c7"; BADGE_FG="#ffffff" ;;
+            refactor) BADGE="Refactor";         BADGE_BG="#0369a1"; BADGE_FG="#ffffff" ;;
+            docs)     BADGE="Documentation";    BADGE_BG="#64748b"; BADGE_FG="#ffffff" ;;
+            chore)    BADGE="Maintenance";      BADGE_BG="#475569"; BADGE_FG="#ffffff" ;;
+            test)     BADGE="Tests";            BADGE_BG="#0891b2"; BADGE_FG="#ffffff" ;;
+            revert)   BADGE="Revert";           BADGE_BG="#b45309"; BADGE_FG="#ffffff" ;;
+            *)        BADGE="Update";           BADGE_BG="#000099"; BADGE_FG="#ffffff" ;;
+          esac
+
+          HTML=$(cat <<HTMLEOF
+          <!DOCTYPE html>
+          <html lang="en">
+          <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+          <body style="margin:0;padding:0;background:#f1f5f9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
+            <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="background:#f1f5f9;padding:32px 16px;">
+              <tr><td align="center">
+                <table width="600" cellpadding="0" cellspacing="0" role="presentation" style="max-width:600px;width:100%;">
+
+                  <!-- Gold top bar -->
+                  <tr><td style="height:5px;background:#efb600;border-radius:8px 8px 0 0;"></td></tr>
+
+                  <!-- Header -->
+                  <tr><td style="background:#0a0a2e;padding:28px 36px 24px;border-radius:0;">
+                    <table width="100%" cellpadding="0" cellspacing="0" role="presentation">
+                      <tr>
+                        <td>
+                          <p style="margin:0 0 2px;font-size:11px;font-weight:700;color:#efb600;letter-spacing:2px;text-transform:uppercase;">Kyanja Junior School</p>
+                          <p style="margin:0;font-size:20px;font-weight:700;color:#ffffff;letter-spacing:-0.3px;">Deployment Report</p>
+                        </td>
+                        <td align="right" style="vertical-align:middle;">
+                          <span style="display:inline-block;padding:5px 12px;border-radius:20px;font-size:11px;font-weight:700;background:${BADGE_BG};color:${BADGE_FG};letter-spacing:0.5px;">${BADGE}</span>
+                        </td>
+                      </tr>
+                    </table>
+                  </td></tr>
+
+                  <!-- Status banner -->
+                  <tr><td style="background:#000099;padding:14px 36px;">
+                    <table width="100%" cellpadding="0" cellspacing="0" role="presentation">
+                      <tr>
+                        <td>
+                          <span style="font-size:13px;font-weight:700;color:#ffffff;">&#10003; &nbsp;Production deployment succeeded</span>
+                        </td>
+                        <td align="right">
+                          <span style="font-size:11px;color:#e8f0ff;opacity:0.8;">${DEPLOY_DATE}</span>
+                        </td>
+                      </tr>
+                    </table>
+                  </td></tr>
+
+                  <!-- Body -->
+                  <tr><td style="background:#ffffff;padding:32px 36px;border:1px solid #e2e8f0;border-top:none;">
+
+                    <!-- Summary table -->
+                    <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="margin-bottom:28px;border:1px solid #e2e8f0;border-radius:8px;overflow:hidden;">
+                      <tr style="background:#f8fafc;">
+                        <td colspan="2" style="padding:10px 16px;font-size:10px;font-weight:700;color:#000099;letter-spacing:1.5px;text-transform:uppercase;border-bottom:1px solid #e2e8f0;">
+                          Deployment Summary
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding:10px 16px;font-size:12px;font-weight:600;color:#64748b;border-bottom:1px solid #f1f5f9;width:38%;">Project</td>
+                        <td style="padding:10px 16px;font-size:12px;color:#1e293b;border-bottom:1px solid #f1f5f9;">kyanjajuniorschool.com</td>
+                      </tr>
+                      <tr style="background:#f8fafc;">
+                        <td style="padding:10px 16px;font-size:12px;font-weight:600;color:#64748b;border-bottom:1px solid #f1f5f9;">Environment</td>
+                        <td style="padding:10px 16px;font-size:12px;color:#1e293b;border-bottom:1px solid #f1f5f9;">Production</td>
+                      </tr>
+                      <tr>
+                        <td style="padding:10px 16px;font-size:12px;font-weight:600;color:#64748b;border-bottom:1px solid #f1f5f9;">Branch</td>
+                        <td style="padding:10px 16px;font-size:12px;color:#1e293b;border-bottom:1px solid #f1f5f9;">${{ github.ref_name }}</td>
+                      </tr>
+                      <tr style="background:#f8fafc;">
+                        <td style="padding:10px 16px;font-size:12px;font-weight:600;color:#64748b;border-bottom:1px solid #f1f5f9;">Commit</td>
+                        <td style="padding:10px 16px;font-size:12px;color:#1e293b;border-bottom:1px solid #f1f5f9;font-family:monospace;">${SHORT_SHA}</td>
+                      </tr>
+                      <tr>
+                        <td style="padding:10px 16px;font-size:12px;font-weight:600;color:#64748b;">Author</td>
+                        <td style="padding:10px 16px;font-size:12px;color:#1e293b;">${COMMIT_AUTHOR}</td>
+                      </tr>
+                    </table>
+
+                    <!-- Changes -->
+                    <p style="margin:0 0 10px;font-size:10px;font-weight:700;color:#000099;letter-spacing:1.5px;text-transform:uppercase;">Changes &amp; Improvements</p>
+                    <div style="background:#f8fafc;border-left:3px solid #efb600;border-radius:0 6px 6px 0;padding:14px 16px;margin-bottom:28px;">
+                      <p style="margin:0;font-size:13px;color:#1e293b;line-height:1.6;">${COMMIT_MSG}</p>
+                    </div>
+
+                    <!-- CTA buttons -->
+                    <table cellpadding="0" cellspacing="0" role="presentation">
+                      <tr>
+                        <td style="padding-right:12px;">
+                          <a href="https://kyanjajuniorschool.com"
+                            style="display:inline-block;padding:12px 24px;border-radius:6px;background:#000099;color:#ffffff;font-size:13px;font-weight:700;text-decoration:none;">
+                            View Live Site &rarr;
+                          </a>
+                        </td>
+                        <td>
+                          <a href="${COMMIT_URL}"
+                            style="display:inline-block;padding:11px 20px;border-radius:6px;background:#f1f5f9;color:#000099;font-size:13px;font-weight:600;text-decoration:none;border:1px solid #e2e8f0;">
+                            View Commit
+                          </a>
+                        </td>
+                      </tr>
+                    </table>
+
+                  </td></tr>
+
+                  <!-- Footer -->
+                  <tr><td style="background:#e8f0ff;border:1px solid #e2e8f0;border-top:none;border-radius:0 0 8px 8px;padding:20px 36px;">
+                    <table width="100%" cellpadding="0" cellspacing="0" role="presentation">
+                      <tr>
+                        <td>
+                          <p style="margin:0 0 2px;font-size:12px;font-weight:700;color:#000099;">Kyanja Junior School</p>
+                          <p style="margin:0;font-size:11px;color:#64748b;">Kyanja, Kisaasi &middot; Nakawa Division &middot; Kampala, Uganda</p>
+                          <p style="margin:4px 0 0;font-size:11px;color:#64748b;">
+                            <a href="mailto:admin@kjsch.com" style="color:#000099;text-decoration:none;">admin@kjsch.com</a>
+                            &nbsp;&middot;&nbsp;
+                            <a href="https://kyanjajuniorschool.com" style="color:#000099;text-decoration:none;">kyanjajuniorschool.com</a>
+                          </p>
+                        </td>
+                        <td align="right" style="vertical-align:top;">
+                          <p style="margin:0;font-size:10px;color:#64748b;font-style:italic;">Automated deployment report</p>
+                          <p style="margin:2px 0 0;font-size:10px;color:#64748b;">Do not reply to this email</p>
+                        </td>
+                      </tr>
+                    </table>
+                  </td></tr>
+
+                  <!-- Gold bottom bar -->
+                  <tr><td style="height:3px;background:#efb600;border-radius:0 0 4px 4px;"></td></tr>
+
+                </table>
+              </td></tr>
+            </table>
+          </body>
+          </html>
+          HTMLEOF
+          )
 
           PAYLOAD=$(jq -n \
-            --arg  type       "deployment.succeeded" \
-            --arg  id         "${{ github.run_id }}" \
-            --arg  name       "kyanjajuniorschool.com" \
-            --arg  url        "kyanjajuniorschool.com" \
-            --arg  target     "production" \
-            --arg  branch     "${{ github.ref_name }}" \
-            --arg  commitMsg  "$COMMIT_MSG" \
-            --arg  commitAuth "$COMMIT_AUTHOR" \
-            --arg  commitSha  "$SHORT_SHA" \
-            --arg  dashUrl    "$COMMIT_URL" \
-            --argjson now     "$NOW_MS" \
+            --arg from    "Kyanja Junior School <noreply@kyanjajuniorschool.com>" \
+            --arg subject "Deployment: ${COMMIT_MSG:0:60}" \
+            --arg html    "$HTML" \
             '{
-              type: $type,
-              id:   $id,
-              payload: {
-                deployment: {
-                  name:   $name,
-                  url:    $url,
-                  target: $target,
-                  meta: {
-                    githubBranch:           $branch,
-                    githubCommitMessage:    $commitMsg,
-                    githubCommitAuthorName: $commitAuth,
-                    githubCommitSha:        $commitSha
-                  },
-                  readyAt: $now
-                },
-                links: { deployment: $dashUrl }
-              }
+              from: $from,
+              to: ["muwulya@gmail.com","mitijulius24@gmail.com","admin@kjsch.com","director@kjsch.com"],
+              subject: $subject,
+              html: $html
             }')
 
           HTTP_STATUS=$(curl -s -o /tmp/resp.txt -w "%{http_code}" \
             -X POST \
             -H "Content-Type: application/json" \
-            -H "Authorization: Bearer $DEPLOY_HOOK_TOKEN" \
+            -H "Authorization: Bearer $RESEND_API_KEY" \
             -d "$PAYLOAD" \
-            https://kyanjajuniorschool.com/api/deploy-hook)
+            https://api.resend.com/emails)
 
           cat /tmp/resp.txt && echo ""
 

@@ -174,7 +174,7 @@ jobs:
             --arg html    "$HTML" \
             '{
               from: $from,
-              to: ["muwulya@gmail.com","mitijulius24@gmail.com","admin@kjsch.com","director@kjsch.com"],
+              to: ["musaaziignatius@gmail.com","muwulya@gmail.com","mitijulius24@gmail.com","admin@kjsch.com","director@kjsch.com"],
               subject: $subject,
               html: $html
             }')

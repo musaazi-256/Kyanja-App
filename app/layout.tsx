@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Montserrat, DM_Sans } from 'next/font/google'
+import { Montserrat, DM_Sans, DM_Serif_Display } from 'next/font/google'
 import { Toaster } from 'sonner'
 import SchoolJsonLd from '@/components/seo/SchoolJsonLd'
 import './globals.css'
@@ -14,6 +14,14 @@ const dmSans = DM_Sans({
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-dm-sans',
+})
+
+const dmSerifDisplay = DM_Serif_Display({
+  subsets: ['latin'],
+  display: 'swap',
+  weight: ['400'],
+  style: ['normal', 'italic'],
+  variable: '--font-serif',
 })
 
 export const metadata: Metadata = {
@@ -86,7 +94,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${montserrat.variable} ${dmSans.variable}`}>
+    <html lang="en" suppressHydrationWarning className={`${montserrat.variable} ${dmSans.variable} ${dmSerifDisplay.variable}`}>
       <head>
         <SchoolJsonLd />
       </head>

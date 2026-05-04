@@ -7,12 +7,6 @@ export const GENERAL_IMAGE_TYPES = [
   'image/gif',
 ] as const
 
-export const HERO_IMAGE_TYPES = [
-  'image/jpeg',
-  'image/png',
-  'image/webp',
-] as const
-
 export function fileAcceptList(types: readonly string[]): string {
   return types.join(',')
 }

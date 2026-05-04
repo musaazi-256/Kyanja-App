@@ -27,6 +27,9 @@ export const ROLE_PERMISSIONS: RolePermissions = {
     'testimonials:write',
     'testimonials:delete',
     'testimonials:publish',
+    'staff:read',
+    'staff:write',
+    'staff:delete',
   ],
   staff: [
     'applications:read',

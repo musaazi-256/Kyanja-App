@@ -1,6 +1,5 @@
 import { getGalleryImages } from '@/lib/db/media'
-import Image from 'next/image'
-import { imageUrl } from '@/lib/media/image-url'
+import GalleryGrid from '@/components/public/gallery/GalleryGrid'
 import type { Metadata } from 'next'
 
 export const dynamic = 'force-dynamic'
@@ -57,26 +56,7 @@ export default async function GalleryPage() {
               <p className="text-slate-500">Check back shortly for beautiful photos from our school events and daily activities.</p>
             </div>
           ) : (
-            <div className={`columns-1 sm:columns-2 md:columns-3 xl:columns-4 gap-1.5 space-y-1.5 mx-auto ${centeredWidthClass}`}>
-              {images.map((img) => (
-                <div key={img.id} className="break-inside-avoid rounded-xl overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group bg-white border border-slate-100 relative">
-                  <Image
-                    src={imageUrl(img.public_url)}
-                    alt={img.alt_text ?? img.file_name}
-                    width={900}
-                    height={600}
-                    quality={82}
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                    className="w-full h-auto block group-hover:scale-105 transition-transform duration-700"
-                  />
-                  {img.caption && (
-                    <div className="absolute bottom-0 left-0 right-0 bg-linear-to-t from-black/80 to-transparent p-4 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
-                      <p className="text-sm font-medium text-white">{img.caption}</p>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
+            <GalleryGrid images={images} centeredWidthClass={centeredWidthClass} />
           )}
         </div>
       </section>

@@ -22,38 +22,38 @@ import NewsSection from "@/components/public/news/NewsSection";
 import DownloadsSection from "@/components/public/DownloadsSection";
 import NewsletterSection from "@/components/public/newsletter/NewsletterSection";
 import CtaSection from "@/components/public/cta/CtaSection";
-import { getSetting } from "@/lib/db/settings";
-import { getCarouselImages, getNewsImages } from "@/lib/db/media";
+import OurTeamSection from "@/components/public/team/OurTeamSection";
+import { getCarouselImages, getHeroImages, getNewsImages } from "@/lib/db/media";
 import { getPublishedDownloads } from "@/lib/db/downloads";
 import { getPublishedTestimonials } from "@/lib/db/testimonials";
+import { getFeaturedStaff } from "@/lib/db/staff";
 
 export default async function HomePage() {
   const year = new Date().getFullYear();
   const startYear = new Date().getMonth() >= 7 ? year : year - 1;
   const academicYear = `${startYear}/${startYear + 1}`;
 
-  const [heroDesktop, heroMobile, heroLegacy, carouselImages, newsImages, downloads, testimonials] =
+  const [heroImages, carouselImages, newsImages, downloads, testimonials, featuredStaff] =
     await Promise.all([
-      getSetting("hero_image_url_desktop").catch(() => ""),
-      getSetting("hero_image_url_mobile").catch(() => ""),
-      getSetting("hero_image_url").catch(() => ""),
+      getHeroImages(),
       getCarouselImages(),
       getNewsImages(),
       getPublishedDownloads(),
       getPublishedTestimonials(),
+      getFeaturedStaff(),
     ]);
 
-  const desktopUrl = heroDesktop || heroLegacy || undefined;
-  const mobileUrl  = heroMobile  || heroLegacy || undefined;
+  const heroSlides = heroImages.map(f => f.public_url).filter(Boolean) as string[];
 
   return (
     <div>
-      <HeroSection desktopUrl={desktopUrl} mobileUrl={mobileUrl} />
+      <HeroSection slides={heroSlides} />
       <TrustBar />
       <ProgramsSection />
       <HowToApplySection />
       <ImageCarousel slides={carouselImages} />
       <TestimonialsSection testimonials={testimonials} />
+      <OurTeamSection members={featuredStaff} />
       <WhyUsSection />
       <NewsSection images={newsImages} />
       <DownloadsSection downloads={downloads} />

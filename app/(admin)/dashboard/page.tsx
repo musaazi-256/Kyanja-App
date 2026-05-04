@@ -1,7 +1,7 @@
 import { getApplicationStats } from '@/lib/db/applications'
 import { getSubscriberCount } from '@/lib/db/newsletter'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { FileText, CheckCircle, Clock, Users, XCircle, BookOpen, Image, Quote } from 'lucide-react'
+import { FileText, CheckCircle, Clock, Users, XCircle, BookOpen, Image, Quote, UserSquare2, GalleryHorizontal } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import type { Metadata } from 'next'
@@ -94,6 +94,18 @@ export default async function DashboardPage() {
               <Link href="/dashboard/testimonials">
                 <Quote className="w-4 h-4 mr-2" />
                 Manage Testimonials
+              </Link>
+            </Button>
+            <Button asChild variant="outline" className="w-full justify-start">
+              <Link href="/dashboard/staff">
+                <UserSquare2 className="w-4 h-4 mr-2" />
+                Manage Staff Members
+              </Link>
+            </Button>
+            <Button asChild variant="outline" className="w-full justify-start">
+              <Link href="/dashboard/media?context=hero">
+                <GalleryHorizontal className="w-4 h-4 mr-2" />
+                Manage Hero Slideshow Images
               </Link>
             </Button>
           </CardContent>

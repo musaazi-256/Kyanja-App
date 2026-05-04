@@ -136,6 +136,21 @@ export interface Testimonial {
   updated_at:    string
 }
 
+// ─── Staff ────────────────────────────────────────────────────────────────────
+export type StaffCategory = 'admin' | 'teaching' | 'non_teaching'
+
+export interface StaffMember {
+  id:          string
+  name:        string
+  position:    string
+  category:    StaffCategory
+  photo_url:   string | null
+  featured:    boolean
+  sort_order:  number
+  created_at:  string
+  updated_at:  string
+}
+
 // ─── Calendar ─────────────────────────────────────────────────────────────────
 export interface CalendarEvent {
   id: string

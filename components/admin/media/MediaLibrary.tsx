@@ -27,13 +27,13 @@ import type { MediaFile, PaginationMeta, MediaContext } from '@/types/app'
 type MediaContextFilter = MediaContext | 'carousel'
 
 const CONTEXTS: { value: MediaContextFilter; label: string }[] = [
-  { value: 'carousel',     label: 'Carousel' },
-  { value: 'hero',         label: 'Hero' },
+  { value: 'hero',         label: 'Hero Slideshow' },
+  { value: 'carousel',     label: 'Life at School' },
   { value: 'gallery',      label: 'Gallery' },
   { value: 'admissions',   label: 'Admissions' },
   { value: 'news',         label: 'News & Announcements' },
   { value: 'page_content', label: 'Page Content' },
-  { value: 'profile',      label: 'Profile' },
+  { value: 'profile',      label: 'Team Members Profile' },
 ]
 
 function formatBytes(bytes: number | null | undefined): string {

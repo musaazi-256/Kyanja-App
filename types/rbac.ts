@@ -37,6 +37,11 @@ export const PERMISSIONS = {
   'downloads:edit':    'Edit download metadata',
   'downloads:delete':  'Delete downloads',
   'downloads:publish': 'Publish / unpublish downloads',
+
+  // Staff
+  'staff:read':    'View staff members in admin',
+  'staff:write':   'Create and edit staff members',
+  'staff:delete':  'Delete staff members',
 } as const
 
 export type Permission = keyof typeof PERMISSIONS

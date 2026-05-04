@@ -62,16 +62,15 @@ async function compressImage(file: File, maxWidth = 1920, quality = 0.82): Promi
 type Step = 'form' | 'copy'
 
 // Contexts that accept multiple files at once
-const MULTI_CONTEXTS: MediaContext[] = ['hero', 'gallery', 'admissions', 'page_content']
+const MULTI_CONTEXTS: MediaContext[] = ['hero', 'gallery', 'admissions']
 
 const CONTEXTS: { value: MediaContext; label: string }[] = [
-  { value: 'hero',         label: 'Hero Slideshow' },
-  { value: 'carousel',     label: 'Life at School' },
-  { value: 'gallery',      label: 'Gallery' },
-  { value: 'admissions',   label: 'Admissions' },
-  { value: 'news',         label: 'News & Announcements' },
-  { value: 'page_content', label: 'Page Content' },
-  { value: 'profile',      label: 'Team Members Profile' },
+  { value: 'hero',       label: 'Hero Slideshow' },
+  { value: 'carousel',   label: 'Life at School' },
+  { value: 'gallery',    label: 'Gallery' },
+  { value: 'admissions', label: 'Admissions' },
+  { value: 'news',       label: 'News & Announcements' },
+  { value: 'profile',    label: 'Team Members Profile' },
 ]
 
 const CONTEXT_SPECS: Partial<Record<MediaContext, { size: string; ratio: string; tip: string; hero?: string }>> = {
